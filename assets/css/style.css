@@ -1,0 +1,31 @@
+.logo-text {
+    font-size: 2em;
+    color: #0094ff;
+}
+
+.logo-text:hover{
+    text-decoration:none;
+
+}
+
+.signup-form {
+    width: 60%;
+    margin: 30px auto auto;
+}
+
+    .signup-form button {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        margin:5px auto 10px auto;
+    }
+
+@media screen and (max-width:767px) {
+    header div {
+        text-align: center !important;
+    }
+
+    .signup-form a {
+        display: block;
+    }
+}
