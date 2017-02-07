@@ -7,36 +7,45 @@
     <div class="form-group">
         <label for="username" class="col-sm-3 control-label">Username</label>
         <div class="col-sm-9">
-            <input class="form-control" type="text" name="username" value="{{username}}" />
+            <input class="form-control" type="text" name="username" value="{{username}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a username between 4 and 20 characters."/>
         </div>
     </div>
 
     <div class="form-group">
         <label for="password" class="col-sm-3 control-label">Password</label>
         <div class="col-sm-9">
-            <input class="form-control" type="password" name="password" />
+            <input class="form-control" type="password" name="password" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a password between 6 and 30 characters." />
         </div>
     </div>
 
     <div class="form-group">
         <label for="verify" class="col-sm-3 control-label">Confirm Password</label>
         <div class="col-sm-9">
-            <input class="form-control" type="password" name="verify" />
+            <input class="form-control" type="password" name="verify" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter your password again." />
         </div>
     </div>
 
     <div class="form-group">
         <label for="email" class="col-sm-3 control-label">Email (Optional)</label>
         <div class="col-sm-9">
-            <input class="form-control" type="email" name="email" value="{{email}}" />
+            <input class="form-control" type="email" name="email" value="{{email}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="You may choose to enter your email address." />
         </div>
     </div>
     <div class="text-center text-danger">
-        <span>{{error}}</span>
+        <span id="error">{{error}}</span>
     </div>
     <button type="submit" class="btn btn-primary">Signup</button>
     <div class="text-center">
         <a href="./login">Already have an account? Login instead</a>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<script src="./assets/js/validate.js"></script>
 {% endblock %}
