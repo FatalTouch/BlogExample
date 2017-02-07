@@ -14,10 +14,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.
                                        autoescape=True)
 
 
-class User(ndb.model):
-    username = ndb.StringProperty()
-    password = ndb.StringProperty()
-
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
@@ -28,7 +24,8 @@ class ViewHandler(webapp2.RequestHandler):
     def write(self, *args, **kwargs):
         self.response.write(*args, **kwargs)
 
-    def render_str(self, view, **kwargs):
+    @staticmethod
+    def render_str(view, **kwargs):
         v = JINJA_ENVIRONMENT.get_template(view)
         return v.render(**kwargs)
 
@@ -64,6 +61,7 @@ def is_valid_password(password, verify):
                         "between 6-30 characters.")
     else:
         return "Password or confirmation password can't be empty."
+
 
 def is_valid_email(email):
     if email:
@@ -109,7 +107,7 @@ class SignupPage(ViewHandler):
         if has_error:
             self.render("signup.html", **params)
         else:
-
+            self.render("signup.html", **params)
 
 
 app = webapp2.WSGIApplication([
