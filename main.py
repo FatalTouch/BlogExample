@@ -2,8 +2,8 @@ import webapp2
 import os
 import jinja2
 import helpers
-
-from google.appengine.ext import db
+import data
+import datetime
 
 # The path for our templates/views
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "views")
@@ -12,19 +12,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.
                                        FileSystemLoader(TEMPLATE_PATH),
                                        extensions=['jinja2.ext.autoescape'],
                                        autoescape=True)
-
-
-class User(db.Model):
-    username = db.StringProperty(required=True)
-    pw_hash = db.StringProperty(required=True)
-    email = db.StringProperty()
-    created = db.DateTimeProperty(auto_now_add=True)
-
-
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!')
 
 
 class ViewHandler(webapp2.RequestHandler):
@@ -39,10 +26,44 @@ class ViewHandler(webapp2.RequestHandler):
     def render(self, view, **kwargs):
         self.write(self.render_str(view, **kwargs))
 
+    def set_secure_cookie(self, name, val, remember):
+        cookie_val = helpers.create_secure_val(val)
+        if remember:
+            expire_time = datetime.datetime.utcnow() + datetime.timedelta(days=200)
+        else:
+            expire_time = None
+        self.response.set_cookie(name, value=cookie_val, expires=expire_time, path='/')
+
+    def read_secure_cookie(self, name):
+        cookie_val = self.request.cookies.get(name)
+        return cookie_val and helpers.check_secure_val(cookie_val)
+
+    def login(self, user, remember):
+        self.set_secure_cookie('user_id', str(user.key().id()), remember)
+
+    def logout(self):
+        self.response.set_cookie('user_id', value='', max_age=None, path='/')
+
+    def initialize(self, *args, **kwargs):
+        webapp2.RequestHandler.initialize(self, *args, **kwargs)
+        uid = self.read_secure_cookie('user_id')
+        self.user = uid and data.get_user_by_id(int(uid))
+
+
+class MainPage(ViewHandler):
+    def get(self):
+        if self.user:
+            self.render("index.html", user=self.user)
+        else:
+            self.render("index.html")
+
 
 class SignupPage(ViewHandler):
     def get(self):
-        self.render("signup.html")
+        if self.user:
+            self.redirect('/')
+        else:
+            self.render("signup.html")
 
     def post(self):
         params = {}
@@ -72,10 +93,56 @@ class SignupPage(ViewHandler):
         if has_error:
             self.render("signup.html", **params)
         else:
-            self.render("signup.html", **params)
+            user = data.create_user(username, password, email)
+            if user:
+                self.login(user)
+                self.redirect('/welcome')
+            else:
+                params["error"] = "Unable to create user due to unknown error"
+                self.render("signup.html", **params)
+
+
+class WelcomePage(ViewHandler):
+    def get(self):
+        if self.user:
+            self.render("welcome.html", username=self.user.username)
+        else:
+            self.redirect('/signup')
+
+
+class LogoutPage(ViewHandler):
+    def get(self):
+        if self.user:
+            self.logout()
+            self.redirect('/')
+        else:
+            self.redirect('/')
+
+
+class LoginPage(ViewHandler):
+    def get(self):
+        if self.user:
+            self.redirect('/')
+        else:
+            self.render("login.html")
+
+    def post(self):
+        username = self.request.get("username")
+        password = self.request.get("password")
+        remember = self.request.get("remember")
+
+        user = data.authenticate(username, password)
+        if user:
+            self.login(user, remember)
+            self.redirect('/welcome')
+        else:
+            self.render("login.html", error="Invalid login", username = username)
 
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/signup', SignupPage)
+    ('/signup', SignupPage),
+    ('/login', LoginPage),
+    ('/welcome', WelcomePage),
+    ('/logout', LogoutPage)
 ], debug=True)

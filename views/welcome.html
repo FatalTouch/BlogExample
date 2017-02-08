@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="text-center">
+<h1>Welcome, {{username}}</h1>
+<a href="./">Click here if you don't get automatically redirected after 5 seconds.</a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            window.location.href = "./";
+        }, 5000)
+    };
+</script>
+{% endblock %}
+

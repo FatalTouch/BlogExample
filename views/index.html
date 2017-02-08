@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+
+{% block auth %}
+{% if user %}
+<p>Welcome, {{user.username}}</p>
+<a href="./logout" class="btn btn-danger">Logout</a>
+{% else %}
+<a href="./login" class="btn btn-primary">Login</a>
+<a href="./signup" class="btn btn-primary">Signup</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>Main Page</h1>
+{% endblock %}

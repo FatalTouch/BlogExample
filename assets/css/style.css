@@ -1,3 +1,11 @@
+header{
+    padding-top: 15px;
+}
+
+header p{
+    display:inline;
+    margin-right:20px;
+}
 .logo-text {
     font-size: 2em;
     color: #0094ff;
@@ -21,6 +29,9 @@
     }
 
 @media screen and (max-width:767px) {
+    .auth{
+        padding-top: 25px;
+    }
     header div {
         text-align: center !important;
     }
