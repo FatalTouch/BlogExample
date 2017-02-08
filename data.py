@@ -26,10 +26,12 @@ def check_username(username):
 
 
 def authenticate(username, password):
-    user = User.all().filter('username = ', username.lower()).get()
+    username = username.lower()
+    user = User.all().filter('username = ', username).get()
     if user and helpers.is_valid_password_hash(username, password, user.pw_hash):
         return user
 
 
 def get_user_by_id(uid):
     return User.get_by_id(uid)
+
