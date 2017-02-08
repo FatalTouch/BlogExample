@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}New Post{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Create New Blog Post</h1>
+<form method="post">
+    <span id="error" class="text-danger">{{error}}</span>
+    <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" class="form-control" placeholder="Subject" name="subject" value="{{subject}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter the subject.">
+    </div>
+    <div class="form-group">
+        <label for="content">Content</label>
+        <textarea name="content" class="form-control" rows="15" placeholder="Content">{{content}}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-default">Create</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}

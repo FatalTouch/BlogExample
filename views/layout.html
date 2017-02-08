@@ -17,6 +17,14 @@
         </div>
         <div class="col-sm-8 text-right auth">
             {% block auth %}
+            {% if user %}
+<p>Welcome, {{user.username}}</p>
+<a href="./logout" class="btn btn-danger">Logout</a>
+            <a href="./newpost" class="btn btn-primary">Create New Post</a>
+{% else %}
+<a href="./login" class="btn btn-primary">Login</a>
+<a href="./signup" class="btn btn-primary">Signup</a>
+{% endif %}
             {% endblock %}
         </div>
     </header>

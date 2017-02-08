@@ -7,14 +7,14 @@
     <div class="form-group">
         <label for="username" class="col-sm-3 control-label">Username</label>
         <div class="col-sm-9">
-            <input class="form-control" type="text" name="username" value="{{username}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a username between 4 and 20 characters."/>
+            <input class="form-control" type="text" name="username" value="{{username}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter your user name."/>
         </div>
     </div>
 
     <div class="form-group">
         <label for="password" class="col-sm-3 control-label">Password</label>
         <div class="col-sm-9">
-            <input class="form-control" type="password" name="password" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a password between 6 and 30 characters." />
+            <input class="form-control" type="password" name="password" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter your password." />
         </div>
     </div>
 
@@ -37,11 +37,13 @@
 </form>
 {% endblock %}
 
+{% block auth %}
+{% endblock %}
+
 {% block scripts %}
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
-<script src="./assets/js/validate.js"></script>
 {% endblock %}

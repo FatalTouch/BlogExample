@@ -4,22 +4,14 @@
 
 
 {% block content %}
-<div class="row">
-    <div class="col-xs-12">
-        <h1>Latest Blog Posts</h1>
-    </div>
-</div>
-
-{% for p in latest %}
 <div class="row post">
-    <h3 class="text-center"><a href="./post?id={{p.key().id()}}">{{p.subject}}</a></h3>
+    <h3 class="text-center">{{post.subject}}</h3>
     <div class="text-right">
-        <span>Posted: <time class="timeago" datetime="{{p.created}}+00:00"></time></span>
+        <span>Posted: <time class="timeago" datetime="{{post.created}}+00:00"></time></span>
     </div>
     <hr />
-    <p>{{p.content.replace('\n','<br />') | safe}}</p>
+    <p>{{post.content.replace('\n','<br />') | safe}}</p>
 </div>
-{% endfor %}
 
 {% endblock %}
 

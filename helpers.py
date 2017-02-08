@@ -79,3 +79,26 @@ def check_secure_val(secure_val):
     if secure_val == create_secure_val(val):
         return val
 
+
+def is_valid_post_subject(subject):
+    if subject:
+        if len(subject) > 150:
+            return "Subject can't contain more than 150 characters"
+        else:
+            return None
+    else:
+        return "*Post subject can't be empty"
+
+
+def is_valid_post_content(content):
+    if content:
+        if len(content) > 5000:
+            return "Content can't contain more than 5000 characters"
+        else:
+            return None
+    else:
+        return "*Post content can't be empty"
+
+
+def basic_escape(text):
+    return text.replace('<', '&lt;').replace('>', '&gt;')

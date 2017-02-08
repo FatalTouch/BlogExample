@@ -35,3 +35,22 @@ def authenticate(username, password):
 def get_user_by_id(uid):
     return User.get_by_id(uid)
 
+
+class BlogPost(db.Model):
+    subject = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+    user_id = db.IntegerProperty(required=True)
+
+    @classmethod
+    def create(cls, subject, content, user_id):
+        blogpost = cls(subject=subject, content=content, user_id=user_id)
+        blogpost.put()
+        return blogpost
+
+    @classmethod
+    def get_latest(cls):
+        return db.GqlQuery("Select * From BlogPost ORDER BY created desc limit 15")
+
+

@@ -10,7 +10,6 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "views")
 # Initialize the Jinja2 template engine
 JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.
                                        FileSystemLoader(TEMPLATE_PATH),
-                                       extensions=['jinja2.ext.autoescape'],
                                        autoescape=True)
 
 
@@ -52,10 +51,13 @@ class ViewHandler(webapp2.RequestHandler):
 
 class MainPage(ViewHandler):
     def get(self):
+        params = {}
         if self.user:
-            self.render("index.html", user=self.user)
-        else:
-            self.render("index.html")
+            params["user"] = self.user
+        latest_posts = data.BlogPost.get_latest()
+        if latest_posts:
+            params["latest"] = latest_posts
+            self.render("index.html", **params)
 
 
 class SignupPage(ViewHandler):
@@ -95,7 +97,7 @@ class SignupPage(ViewHandler):
         else:
             user = data.create_user(username, password, email)
             if user:
-                self.login(user)
+                self.login(user, False)
                 self.redirect('/welcome')
             else:
                 params["error"] = "Unable to create user due to unknown error"
@@ -136,7 +138,61 @@ class LoginPage(ViewHandler):
             self.login(user, remember)
             self.redirect('/welcome')
         else:
-            self.render("login.html", error="Invalid login", username = username)
+            self.render("login.html", error="Invalid login", username=username)
+
+
+class NewPostPage(ViewHandler):
+    def get(self):
+        if self.user:
+            self.render("newpost.html", user=self.user)
+        else:
+            self.redirect('/login')
+
+    def post(self):
+        params = {}
+        has_error = False
+        subject = self.request.get("subject")
+        content = self.request.get("content")
+        params["subject"] = subject
+        params["content"] = content
+        subject_error = helpers.is_valid_post_subject(subject)
+        if subject_error:
+            params["error"] = subject_error
+            has_error = True
+
+        content_error = helpers.is_valid_post_content(content)
+        if content_error:
+            params["error"] = content_error
+            has_error = True
+
+        if has_error:
+            self.render("newpost.html", **params)
+        else:
+            user_id = self.user.key().id()
+            content = helpers.basic_escape(content)
+            post = data.BlogPost.create(subject, content, user_id)
+            if post:
+                self.redirect('/post?id=%s' % str(post.key().id()))
+            else:
+                params["error"] = "An unknown error occurred. Please try again later"
+                self.render("newpost.html", **params)
+
+
+class PostPage(ViewHandler):
+    def get(self):
+        post_id = self.request.get("id")
+        if not post_id:
+            self.redirect('/')
+        else:
+            params = {}
+            if self.user:
+                params["user"] = self.user
+            post = data.BlogPost.get_by_id(int(post_id))
+            if post:
+                params["post"] = post
+            else:
+                self.redirect('/')
+        self.render("post.html", **params)
 
 
 app = webapp2.WSGIApplication([
@@ -144,5 +200,7 @@ app = webapp2.WSGIApplication([
     ('/signup', SignupPage),
     ('/login', LoginPage),
     ('/welcome', WelcomePage),
-    ('/logout', LogoutPage)
+    ('/logout', LogoutPage),
+    ('/newpost', NewPostPage),
+    ('/post', PostPage)
 ], debug=True)

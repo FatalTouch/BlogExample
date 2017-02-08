@@ -42,11 +42,14 @@
 </form>
 {% endblock %}
 
+{% block auth %}
+{% endblock %}
+
 {% block scripts %}
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
-<script src="./assets/js/validate.js"></script>
+<script src="./assets/js/validate_signup.js"></script>
 {% endblock %}

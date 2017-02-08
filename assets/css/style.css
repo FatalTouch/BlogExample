@@ -16,6 +16,10 @@ header p{
 
 }
 
+.post hr{
+    margin:0 0 30px;
+}
+
 .signup-form {
     width: 60%;
     margin: 30px auto auto;
