@@ -102,3 +102,14 @@ def is_valid_post_content(content):
 
 def basic_escape(text):
     return text.replace('<', '&lt;').replace('>', '&gt;')
+
+
+def is_valid_comment(comment):
+    if comment:
+        if len(comment) > 500:
+            return "Comment can't contain more than 500 characters"
+        else:
+            return None
+    else:
+        return "*Comment can't be empty"
+

@@ -1,3 +1,21 @@
+body{
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: 'Open Sans', sans-serif;
+}
+
+p{
+    color: #555;
+    font-size: 13px;
+}
+a{
+    color:#3498db;
+}
+a:hover{
+    text-decoration:none;
+}
 header{
     padding-top: 15px;
 }
@@ -8,7 +26,7 @@ header p{
 }
 .logo-text {
     font-size: 2em;
-    color: #0094ff;
+    color: #3498db;
 }
 
 .logo-text:hover{
@@ -17,7 +35,25 @@ header p{
 }
 
 .post hr{
-    margin:0 0 30px;
+    margin: 5px 0 2px;
+}
+
+.post hr:last-of-type{
+    margin-bottom: 15px;
+}
+
+.post ul {
+    padding:0 0 5px;
+    margin: 0;
+    list-style: none;
+}
+
+.post ul li {
+    color: #555;
+    margin-right:15px;
+    font-size:12px;
+    margin-left:0;
+    display: inline-block;
 }
 
 .signup-form {
@@ -32,6 +68,29 @@ header p{
         margin:5px auto 10px auto;
     }
 
+.comments h3{
+ color: #3498db;
+}
+
+.comments comment-user{
+    width:100%;
+}
+
+.comments h4 {
+    font-size: 17px;
+}
+.comments h4 span{
+    font-size:12px;
+    float:right;
+}
+.post-a-comment h3{
+    color: #3498db;
+}
+
+.post-a-comment form{
+    margin-top:15px;
+}
+
 @media screen and (max-width:767px) {
     .auth{
         padding-top: 25px;
@@ -42,5 +101,13 @@ header p{
 
     .signup-form a {
         display: block;
+    }
+
+    .post ul {
+        padding-left: 20px;
+    }
+
+    .post p {
+        padding: 20px;
     }
 }

@@ -4,6 +4,7 @@ import jinja2
 import helpers
 import data
 import datetime
+import time
 
 # The path for our templates/views
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "views")
@@ -168,9 +169,8 @@ class NewPostPage(ViewHandler):
         if has_error:
             self.render("newpost.html", **params)
         else:
-            user_id = self.user.key().id()
             content = helpers.basic_escape(content)
-            post = data.BlogPost.create(subject, content, user_id)
+            post = data.BlogPost.create(subject, content, self.user.username)
             if post:
                 self.redirect('/post?id=%s' % str(post.key().id()))
             else:
@@ -190,9 +190,59 @@ class PostPage(ViewHandler):
             post = data.BlogPost.get_by_id(int(post_id))
             if post:
                 params["post"] = post
+            comments = data.Comments.get_comments_by_post(post_id)
+            if comments:
+                params["comments"] = comments
             else:
                 self.redirect('/')
         self.render("post.html", **params)
+
+    def post(self):
+        params = {}
+        post_id = self.request.get("id")
+        if not post_id:
+            self.redirect('/')
+        post = data.BlogPost.get_by_id(int(post_id))
+        if post:
+            params["post"] = post
+        else:
+            self.redirect('/')
+        if self.user:
+            has_error = False
+            params["user"] = self.user
+            action = self.request.get("action")
+            if action:
+                if action == "comment":
+                    post_id = self.request.get("post_id")
+                    comment = self.request.get("comment")
+                    params["comment"] = comment
+                    comment_error = helpers.is_valid_comment(comment)
+                    if comment_error:
+                        params["comment_error"] = comment_error
+                        has_error = True
+                    if not data.BlogPost.exists(post_id):
+                        params["comment_error"] = "Invalid action"
+                        has_error = True
+                    if has_error:
+                        comments = data.Comments.get_comments_by_post(post_id)
+                        if comments:
+                            params["comments"] = comments
+                        self.render("post.html", **params)
+                    else:
+                        comment = data.Comments.create(comment, self.user.username, post_id)
+                        if comment:
+                            params["comment"] = ""
+                            time.sleep(0.1)
+                            params["comments"] = data.Comments.get_comments_by_post(post_id)
+                            self.render("post.html", **params)
+                        else:
+                            comments = data.Comments.get_comments_by_post(post_id)
+                            if comments:
+                                params["comments"] = comments
+                            params["comment_error"] = "Unknown error"
+                            self.render("post.html", **params)
+        else:
+            self.redirect('/login')
 
 
 app = webapp2.WSGIApplication([

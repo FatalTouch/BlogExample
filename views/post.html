@@ -2,17 +2,80 @@
 {% block title %}Home{% endblock %}
 
 
-
 {% block content %}
 <div class="row post">
-    <h3 class="text-center">{{post.subject}}</h3>
-    <div class="text-right">
-        <span>Posted: <time class="timeago" datetime="{{post.created}}+00:00"></time></span>
-    </div>
-    <hr />
-    <p>{{post.content.replace('\n','<br />') | safe}}</p>
+    <h3 class="text-center"><a href="./post?id={{post.key().id()}}">{{post.subject}}</a></h3>
+    <hr>
+    <ul>
+        <li><i class="fa fa-calendar"></i>
+            <time class="timeago" datetime="{{post.created}}+00:00"></time>
+        </li>
+        <li><i class="fa fa-pencil"></i> {{post.username}}</li>
+    </ul>
+    <hr/>
+    <p>{{post.content.replace('\n','<br/>') | safe}}</p>
 </div>
 
+<div class="row">
+    <div class="col-xs-12">
+        <hr>
+    </div>
+</div>
+
+{% if comments %}
+<div class="row comments">
+<div class="col-xs-12">
+        <h3>Comments</h3>
+    </div>
+{% for c in comments%}
+    <div class="col-xs-12 comment">
+<h4 class="comment-user">{{c.username}} <span><time class="timeago" datetime="{{c.created}}+00:00"></time></span></h4>
+        <p>{{c.comment}}</p>
+        </div>
+{% endfor %}
+<div class="row">
+    <div class="col-xs-12">
+        <hr>
+    </div>
+</div>
+</div>
+{% endif %}
+
+
+<div class="row post-a-comment">
+    <div class="col-xs-12">
+        <h3>Leave a Comment</h3>
+    </div>
+    {% if user %}
+    <div class="col-xs-11 col-offset-0">
+        <form method="post">
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Comment" name="comment" id="comment">{{comment}}</textarea>
+            </div>
+            <input type="hidden" name="post_id" value="{{post.key().id()}}">
+            <button class="btn btn-primary" value="comment" name="action">Submit</button>
+            <span class="text-danger">{{comment_error}}</span>
+        </form>
+    </div>
+
+    {% else %}
+    <div class="col-xs-12">
+        <a href="./login" class="btn btn-primary">Login to leave a comment</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block auth %}
+{%if user %}
+{% if post.username == user.username %}
+<form method="post">
+    <button class="btn btn-info" value="edit" name="action"><i class="fa fa-pencil-square-o"></i> Edit Post</button>
+    <button class="btn btn-danger" value="delete" name="action"><i class="fa fa-remove"></i> Delete Post</button>
+</form>
+{% endif %}
+{% endif %}
 {% endblock %}
 
 {% block scripts %}

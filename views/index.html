@@ -6,21 +6,23 @@
 {% block content %}
 <div class="row">
     <div class="col-xs-12">
-        <h1>Latest Blog Posts</h1>
+        <h2>Latest Blog Posts</h2>
     </div>
 </div>
 
 {% for p in latest %}
 <div class="row post">
     <h3 class="text-center"><a href="./post?id={{p.key().id()}}">{{p.subject}}</a></h3>
-    <div class="text-right">
-        <span>Posted: <time class="timeago" datetime="{{p.created}}+00:00"></time></span>
-    </div>
+    <hr>
+    <ul>
+        <li><i class="fa fa-calendar"></i> <time class="timeago" datetime="{{p.created}}+00:00"></time></li>
+        <li><i class="fa fa-pencil"></i> {{p.username}}</li>
+        <li><i class="fa fa-comments"></i> <a href="./post?id={{p.key().id()}}#comments">0 Comments</a></li>
+    </ul>
     <hr />
     <p>{{p.content.replace('\n','<br />') | safe}}</p>
 </div>
 {% endfor %}
-
 {% endblock %}
 
 {% block scripts %}

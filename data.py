@@ -41,16 +41,44 @@ class BlogPost(db.Model):
     content = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
-    user_id = db.IntegerProperty(required=True)
+    username = db.StringProperty(required=True)
 
     @classmethod
-    def create(cls, subject, content, user_id):
-        blogpost = cls(subject=subject, content=content, user_id=user_id)
+    def create(cls, subject, content, username):
+        blogpost = cls(subject=subject, content=content, username=username)
         blogpost.put()
         return blogpost
 
     @classmethod
     def get_latest(cls):
         return db.GqlQuery("Select * From BlogPost ORDER BY created desc limit 15")
+
+    @classmethod
+    def exists(cls, post_id):
+        if post_id:
+            if BlogPost.get_by_id(int(post_id)):
+                return True
+            else:
+                return False
+        else:
+            return False
+
+
+class Comments(db.Model):
+    comment = db.StringProperty(required=True)
+    username = db.StringProperty(required=True)
+    post_id = db.IntegerProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+
+    @classmethod
+    def create(cls, comment, username, post_id):
+        comment = cls(comment=comment, username=username, post_id=int(post_id))
+        comment.put()
+        return comment
+
+    @classmethod
+    def get_comments_by_post(cls, post_id):
+        return cls.all().filter('post_id = ', int(post_id)).order('-created')
+
 
 
