@@ -112,6 +112,10 @@ header p{
     margin-top:15px;
 }
 
+.edit-post{
+    display: none;
+}
+
 @media screen and (max-width:767px) {
     .auth{
         padding-top: 25px;
