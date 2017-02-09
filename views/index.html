@@ -17,7 +17,7 @@
     <ul>
         <li><i class="fa fa-calendar"></i> <time class="timeago" datetime="{{p.created}}+00:00"></time></li>
         <li><i class="fa fa-pencil"></i> {{p.username}}</li>
-        <li><i class="fa fa-comments"></i> <a href="./post?id={{p.key().id()}}#comments">0 Comments</a></li>
+        <li><i class="fa fa-comments"></i> <a href="./post?id={{p.key().id()}}#comments">{{p.comment_count}} Comment{%if p.comment_count != 1 %}s{% endif%}</a></li>
     </ul>
     <hr />
     <p>{{p.content.replace('\n','<br />') | safe}}</p>

@@ -42,6 +42,7 @@ class BlogPost(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
     username = db.StringProperty(required=True)
+    comment_count = db.IntegerProperty(default=0)
 
     @classmethod
     def create(cls, subject, content, username):
@@ -71,7 +72,6 @@ class BlogPost(db.Model):
         cls.get_by_id(int(post_id)).delete()
 
 
-
 class Comments(db.Model):
     comment = db.StringProperty(required=True)
     username = db.StringProperty(required=True)
@@ -82,6 +82,9 @@ class Comments(db.Model):
     def create(cls, comment, username, post_id):
         comment = cls(comment=comment, username=username, post_id=int(post_id))
         comment.put()
+        post = BlogPost.get_by_id(int(post_id))
+        post.comment_count += 1
+        post.put()
         return comment
 
     @classmethod
