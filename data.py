@@ -91,5 +91,13 @@ class Comments(db.Model):
     def get_comments_by_post(cls, post_id):
         return cls.all().filter('post_id = ', int(post_id)).order('-created')
 
+    @classmethod
+    def delete_comment(cls, comment_id):
+        comment = cls.get_by_id(int(comment_id))
+        post = BlogPost.get_by_id(comment.post_id)
+        post.comment_count -= 1
+        post.put()
+        comment.delete()
+
 
 

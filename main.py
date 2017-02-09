@@ -258,6 +258,25 @@ class PostPage(ViewHandler):
             self.redirect('/login')
 
 
+class CommentHandler(ViewHandler):
+    def post(self):
+        action = self.request.get("action")
+        if action:
+            if action == "delete":
+                comment_id = self.request.get("comment_id")
+                if comment_id:
+                    comment = data.Comments.get_by_id(int(comment_id))
+                    if comment.username == self.user.username:
+                        data.Comments.delete_comment(comment_id)
+                        time.sleep(0.1)
+                        self.redirect('/post?id='+ str(comment.post_id))
+                    else:
+                        self.redirect('/post?id=' + str(comment.post_id))
+                else:
+                    self.redirect('/')
+        else:
+            self.redirect('/')
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/signup', SignupPage),
@@ -265,5 +284,6 @@ app = webapp2.WSGIApplication([
     ('/welcome', WelcomePage),
     ('/logout', LogoutPage),
     ('/newpost', NewPostPage),
-    ('/post', PostPage)
+    ('/post', PostPage),
+    ('/comment', CommentHandler)
 ], debug=True)
