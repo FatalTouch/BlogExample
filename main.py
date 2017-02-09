@@ -190,12 +190,12 @@ class PostPage(ViewHandler):
             post = data.BlogPost.get_by_id(int(post_id))
             if post:
                 params["post"] = post
-            comments = data.Comments.get_comments_by_post(post_id)
-            if comments:
-                params["comments"] = comments
+                comments = data.Comments.get_comments_by_post(post_id)
+                if comments:
+                    params["comments"] = comments
+                self.render("post.html", **params)
             else:
                 self.redirect('/')
-        self.render("post.html", **params)
 
     def post(self):
         params = {}
