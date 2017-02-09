@@ -241,6 +241,19 @@ class PostPage(ViewHandler):
                                 params["comments"] = comments
                             params["comment_error"] = "Unknown error"
                             self.render("post.html", **params)
+                elif action == "delete":
+                    post_id = self.request.get("post_id")
+                    if post_id:
+                        post = data.BlogPost.get_by_id(int(post_id))
+                        if post.username == self.user.username:
+                            data.BlogPost.delete_post(post_id)
+                            time.sleep(0.1)
+                            self.redirect('/')
+                        else:
+                            self.get()
+                    else:
+                        self.get()
+
         else:
             self.redirect('/login')
 

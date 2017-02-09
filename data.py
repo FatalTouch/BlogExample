@@ -63,6 +63,14 @@ class BlogPost(db.Model):
         else:
             return False
 
+    @classmethod
+    def delete_post(cls, post_id):
+        comments = Comments.get_comments_by_post(post_id)
+        for c in comments:
+            c.delete()
+        cls.get_by_id(int(post_id)).delete()
+
+
 
 class Comments(db.Model):
     comment = db.StringProperty(required=True)

@@ -34,6 +34,14 @@ header p{
 
 }
 
+
+#deleteModal .modal-footer{
+    text-align: center;
+}
+
+#deleteModal form{
+    display: inline;
+}
 .post hr{
     margin: 5px 0 2px;
 }
