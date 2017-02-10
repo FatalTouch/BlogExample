@@ -190,9 +190,12 @@ class PostPage(ViewHandler):
             self.redirect('/')
         else:
             params = {}
+            post = data.BlogPost.get_by_id(int(post_id))
             if self.user:
                 params["user"] = self.user
-            post = data.BlogPost.get_by_id(int(post_id))
+                if not self.user.username == post.username:
+                    params["like_status"] = data.Likes.get_status(
+                        self.user.username, post_id)
             if post:
                 params["post"] = post
                 comments = data.Comments.get_comments_by_post(post_id)
@@ -215,6 +218,9 @@ class PostPage(ViewHandler):
         if self.user:
             has_error = False
             params["user"] = self.user
+            if not self.user.username == post.username:
+                params["like_status"] = data.Likes.get_status(
+                    self.user.username, post_id)
             action = self.request.get("action")
             if action:
                 if action == "comment":
@@ -354,6 +360,31 @@ class CommentHandler(ViewHandler):
         else:
             self.redirect('/')
 
+
+class LikeHandler(ViewHandler):
+    def post(self):
+        params = {}
+        if self.user:
+            post_id = self.request.get("post_id")
+            action = self.request.get("action")
+            if post_id and action:
+                if action == 'like':
+                    result = data.Likes.like(self.user.username, post_id)
+                    params["like_status"] = 'like'
+                elif action == 'unlike':
+                    result = data.Likes.unlike(self.user.username, post_id)
+                    params["like_status"] = 'unlike'
+                if result:
+                    params["success"] = "true"
+                else:
+                    params["error"] = "Unknown error"
+            else:
+                params["error"] = "No post id specified"
+        else:
+            params["error"] = "Request not authorized"
+        self.response.write(json.dumps(params))
+
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/signup', SignupPage),
@@ -362,5 +393,6 @@ app = webapp2.WSGIApplication([
     ('/logout', LogoutPage),
     ('/newpost', NewPostPage),
     ('/post', PostPage),
-    ('/comment', CommentHandler)
+    ('/comment', CommentHandler),
+    ('/likes', LikeHandler)
 ], debug=True)

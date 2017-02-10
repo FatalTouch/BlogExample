@@ -131,20 +131,32 @@ class Likes(db.Model):
         if post:
             if not post.username == username:
                 db_likes = (cls.all().filter('post_id = ', post_id)
-                            .filter('username = '+username)).get()
+                            .filter('username = ', username)).get()
                 if db_likes:
                     db_likes.value = value
                     db_likes.put()
+                    return True
                 else:
                     db_likes = cls(username=username, post_id=post_id,
                                    value=value)
                     db_likes.put()
+                    return True
 
     @classmethod
     def like(cls, username, post_id):
-        cls.create(username, post_id, True)
+        return cls.create(username, post_id, True)
 
     @classmethod
     def unlike(cls, username, post_id):
-        cls.create(username, post_id, False)
+        return cls.create(username, post_id, False)
+
+    @classmethod
+    def get_status(cls, username, post_id):
+        status = (cls.all().filter('post_id = ', post_id)
+                  .filter('username = ', username)).get()
+
+        if status:
+            return status.value
+        else:
+            return False
 

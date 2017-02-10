@@ -19,7 +19,7 @@
             subjectElement.value = document.getElementsByClassName('subject')[0].innerHTML;
 
             var content = document.getElementsByClassName('content')[0].innerHTML;
-            content = content.replace(/<br>/g, '');
+            content = content.replace(/<br>/g, '\n');
             contentElement.value = content;
 
         };
@@ -45,7 +45,7 @@
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     var result = JSON.parse(xmlhttp.response);
                     if (result.success == "true") {
-                        contentElementMain.innerHTML = contentElement.value;
+                        contentElementMain.innerHTML = contentElement.value.replace(/\n/g, '<br>');
                         subjectElementMain.innerHTML = subjectElement.value
                         var post = document.getElementsByClassName('post')[0];
                         post.style.display = "block";
@@ -142,6 +142,54 @@
             })
 
         }
+    }
+
+
+    var likeButton = document.getElementById('like-post');
+    if (likeButton) {
+        likeButton.addEventListener('click', function () {
+            var status = likeButton.getAttribute('data-value');
+            var action = '';
+            if (status == 'like') {
+                action = 'unlike';
+            }
+            else if (status == 'unlike') {
+                action = 'like';
+            }
+            else {
+                return;
+            }
+            var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    var result = JSON.parse(xmlhttp.response);
+                    if (result.success == "true") {
+                        if (result.like_status == 'like') {
+                            likeButton.setAttribute('class', 'btn btn-danger');
+                            likeButton.setAttribute('data-value', 'like');
+                            likeButton.innerHTML = '<i class=\"fa fa-thumbs-down\"></i> Unlike';
+                        }
+                        else if (result.like_status == 'unlike') {
+                            likeButton.setAttribute('class', 'btn btn-success');
+                            likeButton.setAttribute('data-value', 'unlike');
+                            likeButton.innerHTML = '<i class=\"fa fa-thumbs-up\"></i> Like';
+                        }
+                    }
+                    else if (result.error) {
+                        alert(result.error);
+                    }
+                    else {
+                        alert("Unknown error");
+                    }
+                }
+            }
+
+            var post_id = postIdElement.value;
+
+            xmlhttp.open("POST", '/likes', true);
+            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xmlhttp.send('&post_id=' + post_id + '&action=' + action);
+        })
     }
 
 })();

@@ -14,6 +14,12 @@
     </ul>
     <hr/>
     <p class="content">{{post.content.replace('\n','<br/>') | safe}}</p>
+    {% if like_status == False %}
+    <span><button id="like-post" data-value="unlike" class="btn btn-success"><i class="fa fa-thumbs-up"></i> Like</button> </span>
+    {% elif like_status == True %}
+    <span><button id="like-post" data-value="like" class="btn btn-danger"><i class="fa fa-thumbs-down"></i> Unlike</button> </span>
+    {% endif %}
+
 </div>
 {% if user %}
 {% if user.username == post.username %}
