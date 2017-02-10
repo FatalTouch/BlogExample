@@ -88,6 +88,7 @@ class Comments(db.Model):
 
     @classmethod
     def create(cls, comment, username, post_id):
+        comment = comment.replace('\n', ' ');
         comment = cls(comment=comment, username=username, post_id=int(post_id))
         comment.put()
         post = BlogPost.get_by_id(int(post_id))
@@ -97,6 +98,7 @@ class Comments(db.Model):
 
     @classmethod
     def edit(cls, comment, comment_id, username):
+        comment = comment.replace('\n', ' ');
         db_comment = cls.get_by_id(int(comment_id))
         if db_comment.key().id() == int(comment_id):
             if not db_comment.username == username:
@@ -116,3 +118,33 @@ class Comments(db.Model):
         post.comment_count -= 1
         post.put()
         comment.delete()
+
+
+class Likes(db.Model):
+    username = db.StringProperty(required=True)
+    post_id = db.StringProperty(required=True)
+    value = db.BooleanProperty(required=True)
+
+    @classmethod
+    def create(cls, username, post_id, value):
+        post = BlogPost.get_by_id(int(post_id))
+        if post:
+            if not post.username == username:
+                db_likes = (cls.all().filter('post_id = ', post_id)
+                            .filter('username = '+username)).get()
+                if db_likes:
+                    db_likes.value = value
+                    db_likes.put()
+                else:
+                    db_likes = cls(username=username, post_id=post_id,
+                                   value=value)
+                    db_likes.put()
+
+    @classmethod
+    def like(cls, username, post_id):
+        cls.create(username, post_id, True)
+
+    @classmethod
+    def unlike(cls, username, post_id):
+        cls.create(username, post_id, False)
+
