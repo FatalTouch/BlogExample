@@ -5,6 +5,7 @@ import helpers
 import data
 import datetime
 import time
+import validate
 
 # The path for our templates/views
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "views")
@@ -29,10 +30,12 @@ class ViewHandler(webapp2.RequestHandler):
     def set_secure_cookie(self, name, val, remember):
         cookie_val = helpers.create_secure_val(val)
         if remember:
-            expire_time = datetime.datetime.utcnow() + datetime.timedelta(days=200)
+            expire_time = (datetime.datetime.utcnow() +
+                           datetime.timedelta(days=200))
         else:
             expire_time = None
-        self.response.set_cookie(name, value=cookie_val, expires=expire_time, path='/')
+        self.response.set_cookie(name, value=cookie_val,
+                                 expires=expire_time, path='/')
 
     def read_secure_cookie(self, name):
         cookie_val = self.request.cookies.get(name)
@@ -47,7 +50,7 @@ class ViewHandler(webapp2.RequestHandler):
     def initialize(self, *args, **kwargs):
         webapp2.RequestHandler.initialize(self, *args, **kwargs)
         uid = self.read_secure_cookie('user_id')
-        self.user = uid and data.get_user_by_id(int(uid))
+        self.user = uid and data.User.get_by_id(int(uid))
 
 
 class MainPage(ViewHandler):
@@ -78,17 +81,17 @@ class SignupPage(ViewHandler):
         params["username"] = username
         params["email"] = email
 
-        username_error = helpers.is_valid_username(username)
+        username_error = validate.is_valid_username(username)
         if username_error:
             params["error"] = username_error
             has_error = True
 
-        password_error = helpers.is_valid_password(password, verify)
+        password_error = validate.is_valid_password(password, verify)
         if password_error:
             params["error"] = password_error
             has_error = True
 
-        email_error = helpers.is_valid_email(email)
+        email_error = validate.is_valid_email(email)
         if email_error:
             params["error"] = email_error
             has_error = True
@@ -96,7 +99,7 @@ class SignupPage(ViewHandler):
         if has_error:
             self.render("signup.html", **params)
         else:
-            user = data.create_user(username, password, email)
+            user = data.User.create_user(username, password, email)
             if user:
                 self.login(user, False)
                 self.redirect('/welcome')
@@ -134,7 +137,7 @@ class LoginPage(ViewHandler):
         password = self.request.get("password")
         remember = self.request.get("remember")
 
-        user = data.authenticate(username, password)
+        user = data.User.authenticate(username, password)
         if user:
             self.login(user, remember)
             self.redirect('/welcome')
@@ -156,12 +159,12 @@ class NewPostPage(ViewHandler):
         content = self.request.get("content")
         params["subject"] = subject
         params["content"] = content
-        subject_error = helpers.is_valid_post_subject(subject)
+        subject_error = validate.is_valid_post_subject(subject)
         if subject_error:
             params["error"] = subject_error
             has_error = True
 
-        content_error = helpers.is_valid_post_content(content)
+        content_error = validate.is_valid_post_content(content)
         if content_error:
             params["error"] = content_error
             has_error = True
@@ -174,7 +177,8 @@ class NewPostPage(ViewHandler):
             if post:
                 self.redirect('/post?id=%s' % str(post.key().id()))
             else:
-                params["error"] = "An unknown error occurred. Please try again later"
+                params["error"] = ("An unknown error "
+                                   "occurred. Please try again later")
                 self.render("newpost.html", **params)
 
 
@@ -216,7 +220,7 @@ class PostPage(ViewHandler):
                     post_id = self.request.get("post_id")
                     comment = self.request.get("comment")
                     params["comment"] = comment
-                    comment_error = helpers.is_valid_comment(comment)
+                    comment_error = validate.is_valid_comment(comment)
                     if comment_error:
                         params["comment_error"] = comment_error
                         has_error = True
@@ -229,14 +233,19 @@ class PostPage(ViewHandler):
                             params["comments"] = comments
                         self.render("post.html", **params)
                     else:
-                        comment = data.Comments.create(comment, self.user.username, post_id)
+                        comment = (data.Comments
+                                   .create(comment, self.user.username,
+                                           post_id))
                         if comment:
                             params["comment"] = ""
                             time.sleep(0.1)
-                            params["comments"] = data.Comments.get_comments_by_post(post_id)
+                            params["comments"] = (data.Comments
+                                                  .get_comments_by_post
+                                                  (post_id))
                             self.render("post.html", **params)
                         else:
-                            comments = data.Comments.get_comments_by_post(post_id)
+                            comments = (data.Comments
+                                        .get_comments_by_post(post_id))
                             if comments:
                                 params["comments"] = comments
                             params["comment_error"] = "Unknown error"
@@ -269,7 +278,7 @@ class CommentHandler(ViewHandler):
                     if comment.username == self.user.username:
                         data.Comments.delete_comment(comment_id)
                         time.sleep(0.1)
-                        self.redirect('/post?id='+ str(comment.post_id))
+                        self.redirect('/post?id=' + str(comment.post_id))
                     else:
                         self.redirect('/post?id=' + str(comment.post_id))
                 else:
