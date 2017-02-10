@@ -1,127 +1,171 @@
-body{
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+/* Generic and global styles */
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-h1,h2,h3,h4,h5,h6{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Open Sans', sans-serif;
 }
 
-p{
+p {
     color: #555;
     font-size: 13px;
 }
-a{
-    color:#3498db;
+
+a {
+    color: #3498db;
 }
-a:hover{
-    text-decoration:none;
-}
-header{
+
+    a:hover {
+        text-decoration: none;
+    }
+
+
+/* Header styles */
+
+header {
     padding-top: 15px;
 }
 
-header p{
-    display:inline;
-    margin-right:20px;
-}
+    header p {
+        display: inline;
+        margin-right: 20px;
+    }
+
 .logo-text {
     font-size: 2em;
     color: #3498db;
 }
 
-.logo-text:hover{
-    text-decoration:none;
+    .logo-text:hover {
+        text-decoration: none;
+    }
 
-}
 
+/* Bootstrap Modal styles*/
 
-#deleteModal .modal-footer{
+#deleteModal .modal-footer {
     text-align: center;
 }
 
-#deleteModal form{
+#deleteModal form {
     display: inline;
 }
-.post hr{
-    margin: 5px 0 2px;
-}
 
-.post hr:last-of-type{
-    margin-bottom: 15px;
-}
 
-.post ul {
-    padding:0 0 5px;
-    margin: 0;
-    list-style: none;
-}
+/* Form responsive styles*/
 
-.post ul li {
-    color: #555;
-    margin-right:15px;
-    font-size:12px;
-    margin-left:0;
-    display: inline-block;
-}
-
-.signup-form {
+.form {
     width: 60%;
     margin: 30px auto auto;
 }
 
-    .signup-form button {
+    .form button {
         display: block;
         width: 100%;
         max-width: 200px;
-        margin:5px auto 10px auto;
+        margin: 5px auto 10px auto;
     }
 
-.comments h3{
- color: #3498db;
+
+/* Post page style*/
+
+.post hr {
+    margin: 5px 0 2px;
 }
 
-.comments comment-user{
-    width:100%;
+    .post hr:last-of-type {
+        margin-bottom: 15px;
+    }
+
+.post ul {
+    padding: 0 0 5px;
+    margin: 0;
+    list-style: none;
+}
+
+    .post ul li {
+        color: #555;
+        margin-right: 15px;
+        font-size: 12px;
+        margin-left: 0;
+        display: inline-block;
+    }
+
+
+/* Post page comment styles */
+
+.comments h3 {
+    color: #3498db;
+}
+
+.comments comment-user {
+    width: 100%;
 }
 
 .comments h4 {
     font-size: 17px;
 }
-.comments h4 span{
-    font-size:12px;
-    float:right;
-}
 
-.comments span button{
+    .comments h4 span {
+        font-size: 12px;
+        float: right;
+    }
+
+.comments span button {
     text-decoration: none;
     background: none;
     border: none;
     color: #3498db;
     padding: 0;
-    font-size:12px;
-    margin-right:7px;
+    font-size: 12px;
+    margin-right: 7px;
 }
-.comments span button:hover{
-    color: #214c91;
-}
-.post-a-comment h3{
+
+    .comments span button:hover {
+        color: #214c91;
+    }
+
+
+/* Post page post a comment styles*/
+
+.post-a-comment h3 {
     color: #3498db;
 }
 
-.post-a-comment form{
-    margin-top:15px;
+.post-a-comment form {
+    margin-top: 15px;
 }
 
-.edit-post{
+
+/* Hide the edit post panel in beginning
+    and show later with the javascript*/
+
+.edit-post {
     display: none;
 }
 
+
+/* Media queries */
+
 @media screen and (max-width:767px) {
-    .auth{
+    .auth {
         padding-top: 25px;
     }
+
     header div {
         text-align: center !important;
+    }
+
+    .form {
+        width: 90%;
+        margin: 15px auto auto;
     }
 
     .signup-form a {
@@ -133,6 +177,6 @@ header p{
     }
 
     .post p {
-        padding:0px 20px;
+        padding: 0px 20px;
     }
 }
