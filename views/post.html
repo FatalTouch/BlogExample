@@ -19,7 +19,7 @@
 {% if user.username == post.username %}
 <div class="edit-post">
     <h1 class="text-center">Edit Blog Post</h1>
-    <form method="post">
+    <form id="edit-form" method="post">
         <span id="error" class="text-danger">{{error}}</span>
         <div class="form-group">
             <label for="subject">Subject</label>

@@ -6,6 +6,7 @@ import data
 import datetime
 import time
 import validate
+import json
 
 # The path for our templates/views
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "views")
@@ -262,7 +263,41 @@ class PostPage(ViewHandler):
                             self.get()
                     else:
                         self.get()
+                elif action == "edit":
+                    post_id = self.request.get("post_id")
+                    if post_id:
+                        post = data.BlogPost.get_by_id(int(post_id))
+                        params = {}
+                        has_error = False
+                        subject = self.request.get("subject")
+                        content = self.request.get("content")
+                        subject_error = validate.is_valid_post_subject(subject)
+                        if subject_error:
+                            params["error"] = subject_error
+                            has_error = True
 
+                        content_error = validate.is_valid_post_content(content)
+                        if content_error:
+                            params["error"] = content_error
+                            has_error = True
+
+                        if not (self.user.username == post.username):
+                            params["error"] = "Authorization error"
+                            has_error = True
+
+                        if has_error:
+                            self.response.out.write(json.dumps(params))
+                        else:
+                            content = helpers.basic_escape(content)
+                            post = data.BlogPost.edit(subject, content, post_id)
+                            if post:
+                                time.sleep(0.1)
+                                params["success"] = "true"
+                                self.response.out.write(json.dumps(params))
+                            else:
+                                params["error"] = ("An unknown error "
+                                                   "occurred. Please try again later")
+                                self.response.out.write(json.dumps(params))
         else:
             self.redirect('/login')
 

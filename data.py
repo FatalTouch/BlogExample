@@ -49,6 +49,17 @@ class BlogPost(db.Model):
         return blogpost
 
     @classmethod
+    def edit(cls, subject, content, post_id):
+        blogpost = cls.get_by_id(int(post_id))
+        if blogpost:
+            blogpost.content = content
+            blogpost.subject = subject
+            blogpost.put()
+            return True
+        else:
+            return False
+
+    @classmethod
     def get_latest(cls):
         return db.GqlQuery("Select * From BlogPost "
                            "ORDER BY created desc limit 15")
