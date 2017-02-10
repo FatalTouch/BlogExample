@@ -50,7 +50,7 @@
         <h3>Comments</h3>
     </div>
     {% for c in comments%}
-    <div class="col-xs-12 comment">
+    <div id="comment{{c.key().id()}}" class="col-xs-12 comment">
         <h4 class="comment-user">{{c.username}} <span><time class="timeago"
                                                             datetime="{{c.created}}+00:00"></time></span></h4>
         <p>{{c.comment}}</p>
@@ -59,7 +59,7 @@
         <form action="/comment" method="post">
             <input type="hidden" value="{{c.key().id()}}" name="comment_id">
             <span><button type="submit" value="delete" name="action">Delete</button></span>
-            <span><button type="submit" value="edit" name="action">Edit</button></span>
+            <span><button type="button" class="edit-comment" data-comment="{{c.key().id()}}" value="edit" name="action">Edit</button></span>
         </form>
         {% endif %}
         {% endif %}

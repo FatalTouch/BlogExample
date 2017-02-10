@@ -56,8 +56,6 @@ class BlogPost(db.Model):
             blogpost.subject = subject
             blogpost.put()
             return True
-        else:
-            return False
 
     @classmethod
     def get_latest(cls):
@@ -96,6 +94,16 @@ class Comments(db.Model):
         post.comment_count += 1
         post.put()
         return comment
+
+    @classmethod
+    def edit(cls, comment, comment_id, username):
+        db_comment = cls.get_by_id(int(comment_id))
+        if db_comment:
+            if not db_comment.username == username:
+                return None
+            db_comment.comment = comment
+            db_comment.put()
+            return True
 
     @classmethod
     def get_comments_by_post(cls, post_id):

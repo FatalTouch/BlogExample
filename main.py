@@ -298,6 +298,8 @@ class PostPage(ViewHandler):
                                 params["error"] = ("An unknown error "
                                                    "occurred. Please try again later")
                                 self.response.out.write(json.dumps(params))
+                    else:
+                        self.redirect('/')
         else:
             self.redirect('/login')
 
@@ -318,6 +320,34 @@ class CommentHandler(ViewHandler):
                         self.redirect('/post?id=' + str(comment.post_id))
                 else:
                     self.redirect('/')
+            elif action == "edit":
+                has_error = False;
+                params = {}
+                comment_id = self.request.get("comment_id")
+                post_id = self.request.get("post_id")
+                comment = self.request.get("comment")
+                comment_error = validate.is_valid_comment(comment)
+                if comment_error:
+                    params["comment_error"] = comment_error
+                    has_error = True
+                if not data.BlogPost.exists(post_id):
+                    params["comment_error"] = "Invalid action"
+                    has_error = True
+                if has_error:
+                    self.response.write(json.dumps(params))
+                else:
+                    comment = (data.Comments
+                               .edit(comment, comment_id, self.user.username))
+                    if comment:
+                        time.sleep(0.1)
+                        params["success"] = "true"
+                        self.response.write(json.dumps(params))
+                    else:
+                        params["comment_error"] = "Unknown error"
+                        self.response.write(json.dumps(params))
+            else:
+                self.redirect('/')
+
         else:
             self.redirect('/')
 
