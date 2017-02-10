@@ -98,7 +98,7 @@ class Comments(db.Model):
     @classmethod
     def edit(cls, comment, comment_id, username):
         db_comment = cls.get_by_id(int(comment_id))
-        if db_comment:
+        if db_comment.key().id() == int(comment_id):
             if not db_comment.username == username:
                 return None
             db_comment.comment = comment

@@ -2,6 +2,8 @@
     var editButton = document.getElementById("edit-button");
     var subjectElement = document.getElementsByName('subject')[0];
     var contentElement = document.getElementsByName('content')[0];
+    var subjectElementMain = document.getElementsByClassName('subject')[0];
+    var contentElementMain = document.getElementsByClassName('content')[0];
     var postIdElement = document.getElementsByName('post_id')[0];
     var errorElement = document.getElementById('error');
     var editCommentElements = document.getElementsByClassName('edit-comment');
@@ -43,7 +45,13 @@
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     var result = JSON.parse(xmlhttp.response);
                     if (result.success == "true") {
-                        location.reload();
+                        contentElementMain.innerHTML = contentElement.value;
+                        subjectElementMain.innerHTML = subjectElement.value
+                        var post = document.getElementsByClassName('post')[0];
+                        post.style.display = "block";
+
+                        var editForm = document.getElementsByClassName('edit-post')[0];
+                        editForm.style.display = "none";
                     }
                     else if (result.error) {
                         errorElement.innerHTML = result.error;
@@ -90,7 +98,7 @@
                 cancelSpan.appendChild(cancelButton);
 
                 var errorSpan = document.createElement('span');
-                errorSpan.setAttribute('class','text-danger');
+                errorSpan.setAttribute('class', 'text-danger');
 
                 var elementToReplace = document.getElementById('comment' + comment_id);
                 editElement.value = elementToReplace.querySelector('p').innerHTML;
@@ -111,7 +119,8 @@
                         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                             var result = JSON.parse(xmlhttp.response);
                             if (result.success == "true") {
-                                location.reload();
+                                elementToReplace.querySelector('p').innerHTML = editElement.value;
+                                divElement.parentNode.replaceChild(elementToReplace, divElement);
                             }
                             else if (result.comment_error) {
                                 errorSpan.innerHTML = result.comment_error;

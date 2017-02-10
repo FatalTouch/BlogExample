@@ -326,6 +326,9 @@ class CommentHandler(ViewHandler):
                 comment_id = self.request.get("comment_id")
                 post_id = self.request.get("post_id")
                 comment = self.request.get("comment")
+                params["comment_id"] = comment_id
+                params["comment"] = comment
+                params["post_id"] = post_id
                 comment_error = validate.is_valid_comment(comment)
                 if comment_error:
                     params["comment_error"] = comment_error
