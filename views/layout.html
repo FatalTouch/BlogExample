@@ -1,8 +1,12 @@
-﻿<!DOCTYPE html>
+﻿<!-- Main layout page, base for all our views-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Set the charset to UTF-8 and viewport for responsive design-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Get the initial value of title from the child views -->
     <title>{% block title %}{% endblock %} - Sample Blog</title>
 
     <!-- Site css start -->
@@ -12,39 +16,50 @@
     <link rel="stylesheet" href="./assets/css/style.css" />
     <!-- Site css end -->
 </head>
+
 <body class="container">
+
+    <!-- Header of the page that contains our Text logo and other navigation links -->
     <header class="row">
         <div class="col-sm-4">
             <a class="logo-text" href="./">Sample Blog</a>
         </div>
+
+        <!-- Buttons that are shown based on if the user is logged in or not
+             *Can be overwritten by child views to not be shown at all -->
         <div class="col-sm-8 text-right auth">
             {% block auth %}
             {% if user %}
-            <div class="row">
-                <div class="col-xs-12">
-<p>Welcome, {{user.username}}</p>
-                    </div>
-                  <div class="col-xs-12">
-<a href="./logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
+
+            <p>Welcome, {{user.username}}</p>
+            <a href="./logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
             <a href="./newpost" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Create New Post</a>
-{% else %}
-<a href="./login" class="btn btn-primary"><i class="fa fa-sign-in"></i> Sign In</a>
-<a href="./signup" class="btn btn-primary"><i class="fa fa-user-plus"></i> Sign Up</a>
-{% endif %}
+            {% else %}
+
+            <a href="./login" class="btn btn-primary"><i class="fa fa-sign-in"></i> Sign In</a>
+            <a href="./signup" class="btn btn-primary"><i class="fa fa-user-plus"></i> Sign Up</a>
+            {% endif %}
             {% endblock %}
-                       </div>
-                </div>
         </div>
     </header>
+
     <div class="row">
         <div class="col-xs-12">
             <hr />
         </div>
     </div>
-    {% block content %}
-    {% endblock %}
+
+    <!-- Content block for childs to render the main content of the page -->
+    <div class="row">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Script files that are to be loaded on every page -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- Script block so child views can load their own scripts -->
     {% block scripts %}{% endblock %}
 </body>
 </html>

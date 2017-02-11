@@ -1,50 +1,64 @@
+<!-- Extends the main layout page -->
 {% extends "layout.html" %}
+
+<!-- Sets the title for the page -->
 {% block title %}Sign up{% endblock %}
 
+<!-- Main content for the page -->
 {% block content %}
-<h1 class="text-center">Sign up for Sample Blog</h1>
-<form class="form form-horizontal" method="post">
-    <div class="form-group">
-        <label for="username" class="col-sm-3 control-label">Username</label>
-        <div class="col-sm-9">
-            <input class="form-control" type="text" name="username" value="{{username}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a username between 4 and 20 characters."/>
-        </div>
-    </div>
+<div class="col-xs-12">
+    <h1 class="text-center">Sign up for Sample Blog</h1>
 
-    <div class="form-group">
-        <label for="password" class="col-sm-3 control-label">Password</label>
-        <div class="col-sm-9">
-            <input class="form-control" type="password" name="password" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a password between 6 and 30 characters." />
+    <!-- The signup form -->
+    <form class="form form-horizontal" method="post">
+        <div class="form-group row">
+            <label for="username" class="col-sm-3 control-label">Username</label>
+            <div class="col-sm-9">
+                <input class="form-control" type="text" name="username" value="{{username}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a username between 4 and 20 characters." />
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label for="verify" class="col-sm-3 control-label">Confirm Password</label>
-        <div class="col-sm-9">
-            <input class="form-control" type="password" name="verify" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter your password again." />
+        <div class="form-group row">
+            <label for="password" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+                <input class="form-control" type="password" name="password" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter a password between 6 and 30 characters." />
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label for="email" class="col-sm-3 control-label">Email (Optional)</label>
-        <div class="col-sm-9">
-            <input class="form-control" type="email" name="email" value="{{email}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="You may choose to enter your email address." />
+        <div class="form-group row">
+            <label for="verify" class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+                <input class="form-control" type="password" name="verify" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="Enter your password again." />
+            </div>
         </div>
-    </div>
-    <div class="text-center text-danger">
-        <span id="error">{{error}}</span>
-    </div>
-    <button type="submit" class="btn btn-primary">Signup</button>
-    <div class="text-center">
-        <a href="./login">Already have an account? Login instead</a>
-        {{success}}
-    </div>
-</form>
+
+        <div class="form-group row">
+            <label for="email" class="col-sm-3 control-label">Email (Optional)</label>
+            <div class="col-sm-9">
+                <input class="form-control" type="email" name="email" value="{{email}}" data-trigger="focus" data-toggle="tooltip" data-placement="bottom" title="You may choose to enter your email address." />
+            </div>
+        </div>
+        <div class="text-center text-danger row">
+            <div class="col-xs-12">
+                <span id="error">{{error}}</span>
+            </div>
+            
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">Signup</button>
+            </div>
+            <div class="text-center col-xs-12">
+                <a href="./login">Already have an account? Login instead</a>
+            </div>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
+<!-- Override this block so the links doesn't show on this page -->
 {% block auth %}
 {% endblock %}
 
+<!-- custom javascript for validation and jquery/bootstrap tooltip initialization -->
 {% block scripts %}
 <script>
     $(function () {

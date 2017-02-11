@@ -1,30 +1,36 @@
+<!-- Extends our main layout-->
 {% extends "layout.html" %}
+
+<!-- Title for this page -->
 {% block title %}Home{% endblock %}
 
-
-
+<!-- Main content for this page -->
 {% block content %}
-<div class="row">
-    <div class="col-xs-12">
-        <h2>Latest Blog Posts</h2>
-    </div>
+<div class="col-xs-12">
+    <h2>Latest Blog Posts</h2>
 </div>
 
+<!-- Iterate over all the latest post and insert them into the DOM -->
 {% for p in latest %}
-<div class="row post">
+<div class="col-xs-12 post">
     <h3 class="text-center"><a href="./post?id={{p.key().id()}}">{{p.subject}}</a></h3>
     <hr>
     <ul>
+
+        <!-- Add the +00:00 to the time received from the server because GAE stores the time in UTC -->
         <li><i class="fa fa-calendar"></i> <time class="timeago" datetime="{{p.created}}+00:00"></time></li>
         <li><i class="fa fa-pencil"></i> {{p.username}}</li>
         <li><i class="fa fa-comments"></i> <a href="./post?id={{p.key().id()}}#comments">{{p.comment_count}} Comment{%if p.comment_count != 1 %}s{% endif%}</a></li>
     </ul>
     <hr />
+
+    <!-- Replace all the newlines with html line breaks -->
     <p>{{p.content.replace('\n','<br />') | safe}}</p>
 </div>
 {% endfor %}
 {% endblock %}
 
+<!-- script to show the time relative to current time when the post was created using timeago plugin -->
 {% block scripts %}
 <script src="./assets/js/jquery.timeago.js"></script>
 <script type="text/javascript">

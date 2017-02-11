@@ -1,22 +1,29 @@
+<!-- Extends the main layout page -->
 {% extends "layout.html" %}
+
+<!-- Title for this page -->
 {% block title %}Welcome{% endblock %}
 
-{% block content %}
-<div class="text-center">
-<h1>Welcome, {{username}}</h1>
-<a href="./">Click here if you don't get automatically redirected after 5 seconds.</a>
-    </div>
+<!-- Over write the header controls to be blank for this page -->
+{% block auth %}
 {% endblock %}
 
+<!-- Main content for the page -->
+{% block content %}
+<div class="text-center col-xs-12">
+    <h1>Welcome, {{username}}</h1>
+    <a href="./">Click here if you don't get automatically redirected after 5 seconds.</a>
+</div>
+{% endblock %}
+
+<!-- Script that redirects to the home page after 5 seconds -->
 {% block scripts %}
 <script>
     window.onload = function () {
         setTimeout(function () {
-            window.location.href = "./";
+            window.location = "./";
         }, 5000)
     };
 </script>
 {% endblock %}
 
-{% block auth %}
-{% endblock %}
