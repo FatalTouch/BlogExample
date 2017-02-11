@@ -1,5 +1,6 @@
 import re
-import data
+
+import entities
 import helpers
 
 
@@ -8,7 +9,7 @@ def is_valid_username(username):
     if username:
         user_re = re.compile(r"^[a-zA-Z0-9_-]{4,20}$")
         if user_re.match(username):
-            if not data.User.check_username(username):
+            if not entities.User.check_username(username):
                 return None
             else:
                 return "Username already exists"
