@@ -1,6 +1,7 @@
 # Sample Blog Example
 
-This project is a sample blog editor with many features that should be in a standard blog editor. This project is created using Google App Engine with python extension. You can see live example of the project at https://blogexample-158011.appspot.com/
+This project is a sample blog editor with many features that should be in a standard blog editor. This project is created using Google App Engine with python extension. You can see live example of the project at  
+https://blogexample-158011.appspot.com/
 
 ## Getting Started
 
