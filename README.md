@@ -1,6 +1,6 @@
 # Sample Blog Example
 
-This project is a sample blog editor with many features that should be in a standard blog editor. This project is created using Google App Engine with python extension. You can see live example of the project at ```https://blogexample-158011.appspot.com/```
+This project is a sample blog editor with many features that should be in a standard blog editor. This project is created using Google App Engine with python extension. You can see live example of the project at https://blogexample-158011.appspot.com/
 
 ## Getting Started
 
@@ -8,28 +8,23 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Google account, follow the link to get one.
-```
+Google account, follow the link to get one.  
 https://accounts.google.com/signup
-```
-An app engine project on google developer console, follow the link to create one.
-```
-https://console.cloud.google.com/start
-```
-Latest version of python 2, follow the link to download.
-```
-https://www.python.org/downloads/
-```
+
+An app engine project on google developer console, follow the link to create one.  
+https://console.cloud.google.com/start  
+
+Latest version of python 2, follow the link to download.  
+https://www.python.org/downloads/  
+
 
 ### Installing
 
-Install the google cloud sdk, follow the link to download, switch to your environment from the left pane if it's not windows.
-
-```
+Install the google cloud sdk, follow the link to download, switch to your environment from the left pane if it's not windows.  
 https://cloud.google.com/sdk/docs/quickstart-windows
-```
 
-After downloading follow the instruction on the quick-start page for your platform to properly initialize the gcloud sdk.
+
+After downloading, follow the instruction on the quick-start page for your platform to properly initialize the gcloud sdk.
 
 Then run the following command to install the app engine python extension.
 
