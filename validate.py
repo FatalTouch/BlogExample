@@ -3,7 +3,7 @@ import data
 import helpers
 
 
-# User Registration input validations
+# function to check if the username is valid and it doesn't exist in the db
 def is_valid_username(username):
     if username:
         user_re = re.compile(r"^[a-zA-Z0-9_-]{4,20}$")
@@ -20,6 +20,7 @@ def is_valid_username(username):
         return "*Username can't be empty."
 
 
+# function to check if a password is valid
 def is_valid_password(password, verify):
     if password and verify:
         if password != verify:
@@ -35,6 +36,7 @@ def is_valid_password(password, verify):
         return "Password or confirmation password can't be empty."
 
 
+# function to check if an email is valid
 def is_valid_email(email):
     if email:
         email_re = re.compile(r"^[\S]+@[\S]+.[\S]+$")
@@ -46,11 +48,13 @@ def is_valid_email(email):
         return None
 
 
+# function to check if a password hash is valid
 def is_valid_password_hash(username, password, h):
     salt = h.split('|')[1]
     return h == helpers.make_pw_hash(username, password, salt)
 
 
+# function to check if the post subject is valid
 def is_valid_post_subject(subject):
     if subject:
         if len(subject) > 150:
@@ -61,6 +65,7 @@ def is_valid_post_subject(subject):
         return "*Post subject can't be empty"
 
 
+# function to check if post content is valid
 def is_valid_post_content(content):
     if content:
         if len(content) > 5000:
@@ -71,6 +76,7 @@ def is_valid_post_content(content):
         return "*Post content can't be empty"
 
 
+# function to check if a comment is valid
 def is_valid_comment(comment):
     if comment:
         if len(comment) > 500:

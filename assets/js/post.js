@@ -200,16 +200,18 @@
         }
     }
 
-    // Get the like button element
+    // Get the like button element and total likes element
     var likeButton = document.getElementById('like-post');
-
+    var totalLikesElement = document.getElementById('total-likes');
+    
     // Attach to click event if the button exists
     if (likeButton) {
         likeButton.addEventListener('click', function () {
 
-            // Get the current value of the button
+            // Get the current value of the button and total likes
             var status = likeButton.getAttribute('data-value');
             var action = '';
+            var totalLikes = parseInt(totalLikesElement.innerHTML);
 
             // Make the action be opposite of what the current value is so it can act
             // as a toggle
@@ -224,7 +226,8 @@
             }
 
             // Send an Ajax request and manipulate the button to be reversed upon each request.
-            // so it can act as a toggle button for changing the like/unlike on server
+            // so it can act as a toggle button for changing the like/unlike on server and also
+            // decrease and increase the total likes by 1
             var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
@@ -234,11 +237,13 @@
                             likeButton.setAttribute('class', 'btn btn-danger');
                             likeButton.setAttribute('data-value', 'like');
                             likeButton.innerHTML = '<i class=\"fa fa-thumbs-down\"></i> Unlike';
+                            totalLikesElement.innerHTML = totalLikes + 1;
                         }
                         else if (result.like_status === 'unlike') {
                             likeButton.setAttribute('class', 'btn btn-success');
                             likeButton.setAttribute('data-value', 'unlike');
                             likeButton.innerHTML = '<i class=\"fa fa-thumbs-up\"></i> Like';
+                            totalLikesElement.innerHTML = totalLikes - 1;
                         }
                     }
                     else if (result.error) {

@@ -49,7 +49,12 @@
             <i class="fa fa-calendar"></i>
             <time class="timeago" datetime="{{post.created}}+00:00"></time>
         </li>
-        <li><i class="fa fa-pencil"></i> {{post.username}}</li>
+        <li>
+            <i class="fa fa-pencil"></i> {{post.username}}
+        </li>
+        <li>
+            <i class="fa fa-heart"></i> <span id="total-likes">{{total_likes}}</span>
+        </li>
     </ul>
     <hr />
     <p class="content">{{post.content.replace('\n','<br/>') | safe}}</p>
