@@ -3,11 +3,10 @@ from handlers import ViewHandler
 
 # Handler for logout page
 class LogoutPage(ViewHandler):
+
+    # Use the is_user_authenticated decorator to check if user is logged in
+    @ViewHandler.is_user_authenticated()
     def get(self):
-        # If user is logged in call the logout method and redirect them to
-        # the home page, otherwise just redirect them to home page
-        if self.user:
-            self.logout()
-            self.redirect('/')
-        else:
-            self.redirect('/')
+        # call the logout method and redirect user to the home page
+        self.logout()
+        self.redirect('/')

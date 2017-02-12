@@ -9,7 +9,8 @@ app = webapp2.WSGIApplication([
     ('/welcome', handlers.WelcomePage),
     ('/logout', handlers.LogoutPage),
     ('/newpost', handlers.NewPostPage),
-    ('/post', handlers.PostPage),
-    ('/comment', handlers.CommentHandler),
+    ('/post/([0-9]+)', handlers.PostPage),
+    ('/post/([0-9]+)/comment', handlers.comment1.NewCommentHandler),
+    ('/comment', handlers.comment.CommentHandler),
     ('/likes', handlers.LikesHandler)
 ], debug=True)

@@ -10,10 +10,10 @@ class SignupPage(ViewHandler):
     def get(self):
         # If user is already logged in, send back to home page otherwise
         # render the signup.html view
-        if self.user:
-            self.redirect('/')
-        else:
+        if not self.user:
             self.render("signup.html")
+        else:
+            self.redirect('/')
 
     # Post request handler
     def post(self):

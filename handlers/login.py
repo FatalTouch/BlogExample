@@ -8,10 +8,10 @@ class LoginPage(ViewHandler):
     def get(self):
         # If user is already logged in redirect them to home, otherwise
         # render the login.html view
-        if self.user:
-            self.redirect('/')
-        else:
+        if not self.user:
             self.render("login.html")
+        else:
+            self.redirect('/')
 
     # Post request handler
     def post(self):

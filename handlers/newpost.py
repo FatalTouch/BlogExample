@@ -6,15 +6,14 @@ from utility import validate, helpers
 # Handler for the new post page
 class NewPostPage(ViewHandler):
 
+    # Use the is_user_authenticated decorator to check if user is logged in
+    @ViewHandler.is_user_authenticated()
     # Get request handler
     def get(self):
-        # If the user is logged in render the newpost.html view otherwise
-        # redirect them to login page
-        if self.user:
             self.render("newpost.html", user=self.user)
-        else:
-            self.redirect('/login')
 
+    # Use the is_user_authenticated decorator to check if user is logged in
+    @ViewHandler.is_user_authenticated()
     # Post request handler
     def post(self):
         params = {}
@@ -47,7 +46,7 @@ class NewPostPage(ViewHandler):
             content = helpers.basic_escape(content)
             post = entities.BlogPost.create(subject, content, self.user.username)
             if post:
-                self.redirect('/post?id=%s' % str(post.key().id()))
+                self.redirect('/post/%s' % str(post.key().id()))
             else:
                 params["error"] = ("An unknown error "
                                    "occurred. Please try again later")

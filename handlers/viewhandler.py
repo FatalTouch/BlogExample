@@ -3,6 +3,9 @@ import os
 import jinja2
 import webapp2
 import entities
+import json
+import sys
+import functools
 from utility import helpers
 
 # The path for our templates/views
@@ -15,7 +18,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.
 
 # Main view handler that inherits from the webapp2.RequestHandler
 class ViewHandler(webapp2.RequestHandler):
-
     # write function that writes a response
     def write(self, *args, **kwargs):
         self.response.write(*args, **kwargs)
@@ -64,3 +66,54 @@ class ViewHandler(webapp2.RequestHandler):
         webapp2.RequestHandler.initialize(self, *args, **kwargs)
         uid = self.read_secure_cookie('user_id')
         self.user = uid and entities.User.get_by_id(int(uid))
+
+    # Function decorator to check if the user is authenticated which takes
+    # an optional argument to specify the response type
+    @staticmethod
+    def is_user_authenticated(response_type=None):
+        """ Decorator which redirects the user to login page or returns a json
+        response based on if the user is logged in and the decorator parameters
+        """
+        def user_authenticated(f):
+            @functools.wraps(f)
+            def wrap(self, *args, **kwargs):
+                if self.user:
+                    x = f(self, *args, **kwargs)
+                else:
+                    if response_type == 'json':
+                        x = self.response.write(json.dumps({
+                            "error": "User not authorized"
+                        }))
+                    else:
+                        x = self.redirect('/login')
+                return x
+            return wrap
+        return user_authenticated
+
+        # Function decorator to check if the user is authenticated which takes
+        # an optional argument to specify the response type
+
+    @staticmethod
+    def is_post_valid(response_type=None):
+        """ Decorator which redirects the user to login page or returns a json
+        response based on if the user is logged in and the decorator parameters
+        """
+        def post_valid(f):
+            @functools.wraps(f)
+            def wrap(self, post_id, *args, **kwargs):
+                if helpers.is_valid_int64(post_id):
+                    post = entities.BlogPost.get_by_id(int(post_id))
+                    if post:
+                        x = f(self, post_id, post, *args, **kwargs)
+                    else:
+                        if response_type == 'json':
+                            x = self.response.write(json.dumps({
+                                "error": "Invalid post id"
+                            }))
+                        else:
+                            x = self.redirect('/')
+                else:
+                    x = self.redirect('/')
+                return x
+            return wrap
+        return post_valid

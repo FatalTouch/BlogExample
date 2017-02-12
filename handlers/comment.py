@@ -9,6 +9,7 @@ import entities
 class CommentHandler(ViewHandler):
 
     # This one only contains post handler!
+    @ViewHandler.is_user_authenticated()
     def post(self):
         action = self.request.get("action")
 
@@ -33,9 +34,9 @@ class CommentHandler(ViewHandler):
                         # to the post
                         entities.Comments.delete_comment(comment_id)
                         time.sleep(0.1)
-                        self.redirect('/post?id=' + str(comment.post_id))
+                        self.redirect('/post/' + str(comment.post_id))
                     else:
-                        self.redirect('/post?id=' + str(comment.post_id))
+                        self.redirect('/post/' + str(comment.post_id))
                 else:
                     self.redirect('/')
 

@@ -1,7 +1,7 @@
 import hashlib
 import random
 import hmac
-
+import logging
 # Letters that are used to create a salt
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 # Secret key that is used to make a secure value
@@ -40,3 +40,19 @@ def check_secure_val(secure_val):
 # A basic escape function to escape html tags in user input
 def basic_escape(text):
     return text.replace('<', '&lt;').replace('>', '&gt;')
+
+
+def is_valid_int64(i):
+    try:
+        i = int(i)
+        if i.bit_length() > 63:
+            return False
+        else:
+            return True
+    except ValueError:
+        return False
+
+
+def log(msg):
+    logging.info(msg)
+

@@ -2,6 +2,7 @@ from google.appengine.ext import db
 import _comments
 import _likes
 
+
 # Blog post entity
 class BlogPost(db.Model):
     # Information to store in the blog post entity

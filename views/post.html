@@ -8,7 +8,8 @@
 {% block auth %}
 {%if user %}
 {% if post.username == user.username %}
-<button id="edit-button" class="btn btn-info" value="edit" name="action"><i class="fa fa-pencil-square-o"></i> Edit Post</button>
+<button id="edit-button" class="btn btn-info" value="edit" name="action"><i class="fa fa-pencil-square-o"></i> Edit Post
+</button>
 <button type="button" class="btn btn-danger" value="delete" name="action" data-toggle="modal"
         data-target="#deleteModal">
     <i class="fa fa-remove"></i> Delete Post
@@ -26,7 +27,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 <form method="post">
-                    <input type="hidden" name="post_id" value="{{post.key().id()}}">
                     <button type="submit" class="btn btn-danger" name="action" value="delete">Confirm Delete</button>
                 </form>
             </div>
@@ -42,7 +42,7 @@
 
 <!-- Our main post content that is shown to everyone regardless of their authentication status -->
 <div class="col-xs-12 post">
-    <h3 class="text-center"><a class="subject" href="./post?id={{post.key().id()}}">{{post.subject}}</a></h3>
+    <h3 class="text-center"><a class="subject" href="/post/{{post.key().id()}}">{{post.subject}}</a></h3>
     <hr>
     <ul>
         <li>
@@ -56,14 +56,16 @@
             <i class="fa fa-heart"></i> <span id="total-likes">{{total_likes}}</span>
         </li>
     </ul>
-    <hr />
+    <hr/>
     <p class="content">{{post.content.replace('\n','<br/>') | safe}}</p>
 
     <!-- Get the like status from the server and display the button accordingly. Doesn't show for anonymous users -->
     {% if like_status == False %}
-    <span><button id="like-post" data-value="unlike" class="btn btn-success"><i class="fa fa-thumbs-up"></i> Like</button> </span>
+    <span><button id="like-post" data-value="unlike" class="btn btn-success"><i
+            class="fa fa-thumbs-up"></i> Like</button> </span>
     {% elif like_status == True %}
-    <span><button id="like-post" data-value="like" class="btn btn-danger"><i class="fa fa-thumbs-down"></i> Unlike</button> </span>
+    <span><button id="like-post" data-value="like" class="btn btn-danger"><i
+            class="fa fa-thumbs-down"></i> Unlike</button> </span>
     {% endif %}
 </div>
 
@@ -98,12 +100,14 @@
 
 
 <!-- Comments block for the post -->
+<div class="col-xs-12">
+       <h3>Comments</h3>
+</div>
 <div id="comments" class="col-xs-12 comments">
-    <h3>Comments</h3>
 
     <!-- Iterate over the comments and insert them into the DOM -->
     {% for c in comments %}
-    <div class="row">
+    <div class="row comment">
         <div id="comment{{c.key().id()}}" class="col-xs-12 comment">
             <h4 class="comment-user">
                 {{c.username}} <span>
@@ -119,7 +123,8 @@
             <form action="/comment" method="post">
                 <input type="hidden" value="{{c.key().id()}}" name="comment_id">
                 <span><button type="submit" value="delete" name="action">Delete</button></span>
-                <span><button type="button" class="edit-comment" data-comment="{{c.key().id()}}" value="edit" name="action">Edit</button></span>
+                <span><button type="button" class="edit-comment" data-comment="{{c.key().id()}}" value="edit"
+                              name="action">Edit</button></span>
             </form>
             {% endif %}
             {% endif %}
@@ -136,30 +141,27 @@
     <!-- If user is logged in show the post comment textarea otherwise display a link to login page -->
     {% if user %}
     <div class="col-xs-11 col-offset-0">
-        <form method="post">
-            <div class="form-group">
-                <textarea class="form-control" placeholder="Comment" name="comment" id="comment">{{comment}}</textarea>
-            </div>
-            <input type="hidden" name="post_id" value="{{post.key().id()}}">
-            <button class="btn btn-primary" value="comment" name="action">Submit</button>
-            <span class="text-danger">{{comment_error}}</span>
-        </form>
+        <div class="form-group">
+            <textarea id="comment" class="form-control" placeholder="Comment" name="comment">{{comment}}</textarea>
+        </div>
+        <button id="buttonNewComment" class="btn btn-primary" value="comment" name="action">Submit</button>
+        <span id="errorNewComment" class="text-danger">{{comment_error}}</span>
     </div>
 
     {% else %}
     <div class="col-xs-12">
-        <a href="./login" class="btn btn-primary">Login to leave a comment</a>
+        <a href="/login" class="btn btn-primary">Login to leave a comment</a>
     </div>
     {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="./assets/js/post.js"></script>
-<script src="./assets/js/jquery.timeago.js"></script>
+<script src="/assets/js/jquery.timeago.js"></script>
 <script>
     jQuery(document).ready(function () {
         $("time.timeago").timeago();
     });
 </script>
+<script src="/assets/js/post.js"></script>
 {% endblock %}

@@ -1,0 +1,1 @@
+from newcomment import NewCommentHandler

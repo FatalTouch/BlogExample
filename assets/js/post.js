@@ -1,6 +1,7 @@
-(function () {
+(function ($) {
     'use strict';
 
+    var currentUrl =  location.href.replace(location.hash,'');
     // Element references to be used with the edit post functionality
     var editButton = document.getElementById('edit-button');
     var subjectElement = document.getElementsByName('subject')[0];
@@ -59,9 +60,8 @@
             // Attach to onreadystatechange event handler and check for readystate and response
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-
                     // Parse the Json result
-                    var result = JSON.parse(xmlhttp.response);
+                    var result = JSON.parse(xmlhttp.response.toString());
 
                     // Check if operation was successful and copy the new content to be the originial
                     // content so we don't have to refresh the page.
@@ -94,7 +94,7 @@
             // parameters required by the server
             xmlhttp.open('POST', window.location.href, true);
             xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xmlhttp.send('action=edit&subject=' + subject + '&content=' + content + '&post_id=' + postId);
+            xmlhttp.send('action=edit&subject=' + subject + '&content=' + content);
 
             //return false so we don't submit the form as it is an ajax request!!
             return false;
@@ -154,7 +154,7 @@
 
                 // Create new ajax request with fallback to ActiveXobject
                 var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() :
-                new window.ActiveXObject('Microsoft.XMLHTTP');
+                    new window.ActiveXObject('Microsoft.XMLHTTP');
 
                 // Attach to onreadystatechange event handler and check for readystate and response
                 xmlhttp.onreadystatechange = function () {
@@ -181,14 +181,14 @@
                 };
 
 
-                var postId = postIdElement.value;
+                var postId = currentUrl.split('/').pop();
 
                 // Set the headers, method and other stuff for the request and send it with the
                 // parameters required by the server
                 xmlhttp.open('POST', '/comment', true);
                 xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xmlhttp.send('action=edit&comment=' + editElement.value + '&comment_id=' + commentId +
-                             '&post_id=' + postId);
+                    '&post_id=' + postId);
                 return false;
             });
         };
@@ -203,7 +203,7 @@
     // Get the like button element and total likes element
     var likeButton = document.getElementById('like-post');
     var totalLikesElement = document.getElementById('total-likes');
-    
+
     // Attach to click event if the button exists
     if (likeButton) {
         likeButton.addEventListener('click', function () {
@@ -263,4 +263,73 @@
         });
     }
 
-}());
+    var SendAjaxRequest = function (url, parameters, successFunction, errorFunction) {
+
+        var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                var result = JSON.parse(xmlhttp.response);
+                if (result.success === 'true') {
+                    successFunction(result);
+                }
+                else if (result.error) {
+                    errorFunction(result);
+                }
+                else {
+                    window.alert('Unknown error');
+                }
+            }
+        };
+
+        xmlhttp.open('POST', url, true);
+        xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xmlhttp.send(parameters);
+    };
+
+    var appendNewComment = function (comment_id, comment, username, created) {
+        var html = '<div class="row comment">' +
+            '<div id="comment' + comment_id + '" class="col-xs-12 comment">' +
+            '<h4 class="comment-user">' +
+            username + '<span>' +
+            '<time class="timeago"' +
+            'datetime="' + created + '+00:00"></time>' +
+            '</span>' +
+            '</h4>' +
+            '<p>'+comment+'</p>' +
+            '<form action="/comment" method="post">' +
+            '<input type="hidden" value="' + comment_id + '" name="comment_id">' +
+            '<span><button type="submit" value="delete" name="action">Delete</button></span>' +
+            '<span><button type="button" class="edit-comment" data-comment="' + comment_id + '" value="edit"' +
+            'name="action">Edit</button></span>' +
+            '</form>' +
+            '</div>' +
+            '</div>';
+        $('#comments').prepend(html);
+        $('time.timeago').timeago();
+        $('.edit-comment:first-of-type').click(editCommentHandler);
+    };
+    // Get The new comment submit button if it exists
+    var buttonNewComment = document.getElementById('buttonNewComment')
+
+    // Attach to click event if the button exists on the page
+    if (buttonNewComment) {
+        var buttonNewCommentClick = function () {
+            var commentElement = document.getElementById('comment');
+            var comment = commentElement.value;
+            var errorSpan = document.getElementById('errorNewComment');
+
+            var onSuccess = function (data) {
+                commentElement.value = '';
+                appendNewComment(data.comment_id, data.comment, data.username, data.created);
+            }
+
+            var onError = function (response) {
+                errorSpan.innerHTML = response.error
+            }
+            var parameters = "comment=" + comment;
+            SendAjaxRequest(currentUrl + '/comment', parameters, onSuccess, onError);
+        }
+        buttonNewComment.addEventListener('click', buttonNewCommentClick);
+    }
+
+}(jQuery));
