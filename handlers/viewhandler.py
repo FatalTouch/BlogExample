@@ -143,7 +143,7 @@ class ViewHandler(webapp2.RequestHandler):
             @functools.wraps(f)
             def wrap(self, comment_id, *args, **kwargs):
                 comment = entities.Comments.get_by_id(int(comment_id))
-                if self.user:
+                if self.user and comment:
                     if self.user.username == comment.username:
                         x = f(self, comment_id, *args, **kwargs)
                     else:
@@ -172,7 +172,7 @@ class ViewHandler(webapp2.RequestHandler):
             @functools.wraps(f)
             def wrap(self, post_id, *args, **kwargs):
                 post = entities.BlogPost.get_by_id(int(post_id))
-                if self.user:
+                if self.user and post:
                     if self.user.username == post.username:
                         x = f(self, post_id, *args, **kwargs)
                     else:
