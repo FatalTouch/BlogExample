@@ -1,70 +1,6 @@
 (function ($) {
     'use strict';
 
-
-    // Get the like button element and total likes element
-    var likeButton = document.getElementById('like-post');
-    var totalLikesElement = document.getElementById('total-likes');
-
-    // Attach to click event if the button exists
-    if (likeButton) {
-        likeButton.addEventListener('click', function () {
-
-            // Get the current value of the button and total likes
-            var status = likeButton.getAttribute('data-value');
-            var action = '';
-            var totalLikes = parseInt(totalLikesElement.innerHTML);
-
-            // Make the action be opposite of what the current value is so it can act
-            // as a toggle
-            if (status === 'like') {
-                action = 'unlike';
-            }
-            else if (status === 'unlike') {
-                action = 'like';
-            }
-            else {
-                return;
-            }
-
-            // Send an Ajax request and manipulate the button to be reversed upon each request.
-            // so it can act as a toggle button for changing the like/unlike on server and also
-            // decrease and increase the total likes by 1
-            var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                    var result = JSON.parse(xmlhttp.response);
-                    if (result.success === 'true') {
-                        if (result.like_status === 'like') {
-                            likeButton.setAttribute('class', 'btn btn-danger');
-                            likeButton.setAttribute('data-value', 'like');
-                            likeButton.innerHTML = '<i class=\"fa fa-thumbs-down\"></i> Unlike';
-                            totalLikesElement.innerHTML = totalLikes + 1;
-                        }
-                        else if (result.like_status === 'unlike') {
-                            likeButton.setAttribute('class', 'btn btn-success');
-                            likeButton.setAttribute('data-value', 'unlike');
-                            likeButton.innerHTML = '<i class=\"fa fa-thumbs-up\"></i> Like';
-                            totalLikesElement.innerHTML = totalLikes - 1;
-                        }
-                    }
-                    else if (result.error) {
-                        window.alert(result.error);
-                    }
-                    else {
-                        window.alert('Unknown error');
-                    }
-                }
-            };
-
-            var postId = postIdElement.value;
-
-            xmlhttp.open('POST', '/likes', true);
-            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xmlhttp.send('&post_id=' + postId + '&action=' + action);
-        });
-    }
-
     /** PAGE VARIABLES START **/
 
         // Current url of the page without hash strings
@@ -84,7 +20,6 @@
     var contentElement = document.getElementsByName('content')[0];
     var subjectElementMain = document.getElementsByClassName('subject')[0];
     var contentElementMain = document.getElementsByClassName('content')[0];
-    var postIdElement = document.getElementsByName('post_id')[0];
     var errorElement = document.getElementById('error');
 
     // Reference to cancel edit button
@@ -93,6 +28,12 @@
     // Get our edit form element
     var form = document.getElementById('edit-form');
 
+    // Get the confirm delete button
+    var confirmDelete = document.getElementById('confirm-delete');
+
+    // Get the like button element and total likes element
+    var likeButton = document.getElementById('like-post');
+    var totalLikesElement = document.getElementById('total-likes');
 
     /** PAGE VARIABLES END **/
 
@@ -211,11 +152,27 @@
         };
 
         var onError = function (response) {
-            console.log("xd");
             alert(response.error)
-        }
+        };
 
         SendAjaxRequest(url, "", onSuccess, onError);
+    };
+
+    // function that will be attached to confirm delete post event
+    var confirmDeleteHandler = function () {
+        console.log("clicked");
+        var url = currentUrl + '/delete';
+        var parameters = '';
+
+        var onSuccess = function () {
+            window.location = '/';
+        };
+
+        var onError = function (response) {
+            alert(response.error);
+        };
+
+        SendAjaxRequest(url, parameters, onSuccess, onError);
     };
 
 
@@ -285,6 +242,11 @@
             return false;
         };
     }
+
+    // Attach to confirm delete click event if it exists
+    if (confirmDelete) {
+        confirmDelete.addEventListener('click', confirmDeleteHandler);
+    }
     // Attach to click event if the button exists on the page
     if (buttonNewComment) {
         var buttonNewCommentClick = function () {
@@ -322,5 +284,53 @@
             deleteCommentElements[i].addEventListener('click', deleteCommentHandler);
         }
     }
+
+    // Attach to click event if the button exists
+    if (likeButton) {
+        likeButton.addEventListener('click', function () {
+
+            // Get the current value of the button and total likes
+            var status = likeButton.getAttribute('data-value');
+            var action = '';
+            var totalLikes = parseInt(totalLikesElement.innerHTML);
+
+            // Make the action be opposite of what the current value is so it can act
+            // as a toggle
+            if (status === 'like') {
+                action = 'unlike';
+            }
+            else if (status === 'unlike') {
+                action = 'like';
+            }
+            else {
+                return;
+            }
+
+            var onSuccess = function (data) {
+                if (data.like_status === 'like') {
+                    likeButton.setAttribute('class', 'btn btn-danger');
+                    likeButton.setAttribute('data-value', 'like');
+                    likeButton.innerHTML = '<i class=\"fa fa-thumbs-down\"></i> Unlike';
+                    totalLikesElement.innerHTML = (totalLikes + 1).toString();
+                }
+                else if (data.like_status === 'unlike') {
+                    likeButton.setAttribute('class', 'btn btn-success');
+                    likeButton.setAttribute('data-value', 'unlike');
+                    likeButton.innerHTML = '<i class=\"fa fa-thumbs-up\"></i> Like';
+                    totalLikesElement.innerHTML = (totalLikes - 1).toString();
+                }
+            };
+
+            var onError = function (response) {
+                window.alert(response.error);
+            };
+
+            var url = currentUrl + '/like';
+            var parameters = 'action=' + action;
+
+            SendAjaxRequest(url, parameters, onSuccess, onError);
+        });
+    }
+
 
 }(jQuery));

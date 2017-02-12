@@ -6,17 +6,15 @@ import json
 # Handler for likes
 class LikesHandler(ViewHandler):
 
+    @ViewHandler.is_post_valid('json')
     @ViewHandler.is_user_authenticated('json')
     # Only post requests for this handler
-    def post(self):
+    def post(self, post_id):
         params = {}
-        post_id = self.request.get("post_id")
         action = self.request.get("action")
-
-        # if both post_id and action exists otherwise return json
+        # if action exists otherwise return json
         # response with the errors
-        if post_id and action:
-
+        if action:
             # if action is like then call the like method of Likes entity
             if action == 'like':
                 result = entities.Likes.like(self.user.username, post_id)
@@ -34,5 +32,5 @@ class LikesHandler(ViewHandler):
             else:
                 params["error"] = "Unknown error"
         else:
-            params["error"] = "No post id specified"
+            params["error"] = "Invalid action"
         self.response.write(json.dumps(params))

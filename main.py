@@ -11,8 +11,10 @@ app = webapp2.WSGIApplication([
     ('/newpost', handlers.NewPostPage),
     ('/post/([0-9]+)', handlers.PostPage),
     ('/post/([0-9]+)/edit', handlers.EditPostHandler),
+    ('/post/([0-9]+)/delete', handlers.DeletePostHandler),
+    ('/post/([0-9]+)/like', handlers.LikesHandler),
     ('/post/([0-9]+)/comment', handlers.comment.NewCommentHandler),
     ('/comment/([0-9]+)/edit', handlers.comment.EditCommentHandler),
-    ('/comment/([0-9]+)/delete', handlers.comment.DeleteCommentHandler),
-    ('/likes', handlers.LikesHandler)
+    ('/comment/([0-9]+)/delete', handlers.comment.DeleteCommentHandler)
+
 ], debug=True)
