@@ -1,1 +1,2 @@
 from newcomment import NewCommentHandler
+from editcomment import EditCommentHandler

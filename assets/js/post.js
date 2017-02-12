@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    var currentUrl =  location.href.replace(location.hash,'');
+    var currentUrl = location.href.replace(location.hash, '');
     // Element references to be used with the edit post functionality
     var editButton = document.getElementById('edit-button');
     var subjectElement = document.getElementsByName('subject')[0];
@@ -101,104 +101,6 @@
         };
     }
 
-    // Get all the elements which allow the user to edit the comment.
-    var editCommentElements = document.getElementsByClassName('edit-comment');
-
-    // Check if there are any elements on the page.
-    if (editCommentElements) {
-
-        // function to be passed in to the click handler of each comment
-        var editCommentHandler = function () {
-
-            // Lots of dynamic elements to be generated so we can use them
-            // to allow users to edit their comments
-            var commentId = this.getAttribute('data-comment');
-            var divElement = document.createElement('div');
-            divElement.setAttribute('class', 'col-xs-12');
-            var editElement = document.createElement('textarea');
-            editElement.setAttribute('class', 'form-control');
-            divElement.appendChild(editElement);
-
-
-            var saveSpan = document.createElement('span');
-            var saveButton = document.createElement('button');
-            saveButton.setAttribute('type', 'button');
-            saveButton.innerHTML = 'Save';
-            saveSpan.appendChild(saveButton);
-
-            var cancelSpan = document.createElement('span');
-            var cancelButton = document.createElement('button');
-            cancelButton.setAttribute('type', 'button');
-            cancelButton.innerHTML = 'Cancel';
-            cancelSpan.appendChild(cancelButton);
-
-            var errorSpan = document.createElement('span');
-            errorSpan.setAttribute('class', 'text-danger');
-
-            var elementToReplace = document.getElementById('comment' + commentId);
-            editElement.value = elementToReplace.querySelector('p').innerHTML;
-
-            editElement.parentNode.insertBefore(errorSpan, editElement.nextSibling);
-            editElement.parentNode.insertBefore(cancelSpan, editElement.nextSibling);
-            editElement.parentNode.insertBefore(saveSpan, editElement.nextSibling);
-
-            elementToReplace.parentNode.replaceChild(divElement, elementToReplace);
-
-            // Attach click event handler to dynamically generated cancel button
-            cancelButton.addEventListener('click', function () {
-                divElement.parentNode.replaceChild(elementToReplace, divElement);
-            });
-
-            // Attach click event handler to dynamically generated save button
-            saveButton.addEventListener('click', function () {
-
-                // Create new ajax request with fallback to ActiveXobject
-                var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() :
-                    new window.ActiveXObject('Microsoft.XMLHTTP');
-
-                // Attach to onreadystatechange event handler and check for readystate and response
-                xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-
-                        // Parse the Json result
-                        var result = JSON.parse(xmlhttp.response);
-
-                        // Check if operation was successful and copy the new comment to be the originial
-                        // comment so we don't have to refresh the page.
-                        if (result.success === 'true') {
-                            elementToReplace.querySelector('p').innerHTML = editElement.value;
-                            divElement.parentNode.replaceChild(elementToReplace, divElement);
-                        }
-
-                        // Show the error if any error is in the response from server
-                        else if (result.comment_error) {
-                            errorSpan.innerHTML = result.comment_error;
-                        }
-                        else {
-                            errorSpan.innerHTML = 'Unknown Error';
-                        }
-                    }
-                };
-
-
-                var postId = currentUrl.split('/').pop();
-
-                // Set the headers, method and other stuff for the request and send it with the
-                // parameters required by the server
-                xmlhttp.open('POST', '/comment', true);
-                xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xmlhttp.send('action=edit&comment=' + editElement.value + '&comment_id=' + commentId +
-                    '&post_id=' + postId);
-                return false;
-            });
-        };
-
-        // Loop through all the editComment elements and attach to click event
-        for (var i = 0; i < editCommentElements.length; i++) {
-            editCommentElements[i].addEventListener('click', editCommentHandler);
-
-        }
-    }
 
     // Get the like button element and total likes element
     var likeButton = document.getElementById('like-post');
@@ -263,6 +165,13 @@
         });
     }
 
+    // Get The new comment submit button if it exists
+    var buttonNewComment = document.getElementById('buttonNewComment')
+
+    // Get all the elements which allow the user to edit the comment.
+    var editCommentElements = document.getElementsByClassName('edit-comment');
+
+    // Function to send an ajax request
     var SendAjaxRequest = function (url, parameters, successFunction, errorFunction) {
 
         var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
@@ -286,6 +195,7 @@
         xmlhttp.send(parameters);
     };
 
+    // Function to append a new comment
     var appendNewComment = function (comment_id, comment, username, created) {
         var html = '<div class="row comment">' +
             '<div id="comment' + comment_id + '" class="col-xs-12 comment">' +
@@ -295,7 +205,7 @@
             'datetime="' + created + '+00:00"></time>' +
             '</span>' +
             '</h4>' +
-            '<p>'+comment+'</p>' +
+            '<p>' + comment + '</p>' +
             '<form action="/comment" method="post">' +
             '<input type="hidden" value="' + comment_id + '" name="comment_id">' +
             '<span><button type="submit" value="delete" name="action">Delete</button></span>' +
@@ -308,8 +218,66 @@
         $('time.timeago').timeago();
         $('.edit-comment:first-of-type').click(editCommentHandler);
     };
-    // Get The new comment submit button if it exists
-    var buttonNewComment = document.getElementById('buttonNewComment')
+
+    // function that will be attached on edit button click event
+    var editCommentHandler = function () {
+
+        // Lots of dynamic elements to be generated so we can use them
+        // to allow users to edit their comments
+        var commentId = this.getAttribute('data-comment');
+        var divElement = document.createElement('div');
+        divElement.setAttribute('class', 'col-xs-12');
+        var editElement = document.createElement('textarea');
+        editElement.setAttribute('class', 'form-control');
+        divElement.appendChild(editElement);
+
+
+        var saveSpan = document.createElement('span');
+        var saveButton = document.createElement('button');
+        saveButton.setAttribute('type', 'button');
+        saveButton.innerHTML = 'Save';
+        saveSpan.appendChild(saveButton);
+
+        var cancelSpan = document.createElement('span');
+        var cancelButton = document.createElement('button');
+        cancelButton.setAttribute('type', 'button');
+        cancelButton.innerHTML = 'Cancel';
+        cancelSpan.appendChild(cancelButton);
+
+        var errorSpan = document.createElement('span');
+        errorSpan.setAttribute('class', 'text-danger');
+
+        var elementToReplace = document.getElementById('comment' + commentId);
+        editElement.value = elementToReplace.querySelector('p').innerHTML;
+
+        editElement.parentNode.insertBefore(errorSpan, editElement.nextSibling);
+        editElement.parentNode.insertBefore(cancelSpan, editElement.nextSibling);
+        editElement.parentNode.insertBefore(saveSpan, editElement.nextSibling);
+
+        elementToReplace.parentNode.replaceChild(divElement, elementToReplace);
+
+        // Attach click event handler to dynamically generated cancel button
+        cancelButton.addEventListener('click', function () {
+            divElement.parentNode.replaceChild(elementToReplace, divElement);
+        });
+
+        // Attach click event handler to dynamically generated save button
+        saveButton.addEventListener('click', function () {
+
+            var onSuccess = function () {
+                elementToReplace.querySelector('p').innerHTML = editElement.value;
+                divElement.parentNode.replaceChild(elementToReplace, divElement);
+            };
+
+            var onError = function (response) {
+                errorSpan.innerHTML = response.error;
+            };
+
+            var parameters = "comment=" + editElement.value;
+            SendAjaxRequest('/comment/' + commentId + '/edit', parameters, onSuccess, onError);
+        });
+    };
+
 
     // Attach to click event if the button exists on the page
     if (buttonNewComment) {
@@ -330,6 +298,16 @@
             SendAjaxRequest(currentUrl + '/comment', parameters, onSuccess, onError);
         }
         buttonNewComment.addEventListener('click', buttonNewCommentClick);
+    }
+
+
+    // Attach to all edit elements on the page if any.
+    if (editCommentElements) {
+        // Loop through all the editComment elements and attach to click event
+        for (var i = 0; i < editCommentElements.length; i++) {
+            editCommentElements[i].addEventListener('click', editCommentHandler);
+
+        }
     }
 
 }(jQuery));

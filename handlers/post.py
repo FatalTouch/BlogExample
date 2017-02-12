@@ -23,7 +23,8 @@ class PostPage(ViewHandler):
 
     @ViewHandler.is_post_valid()
     # Get request handler
-    def get(self, post_id, post):
+    def get(self, post_id):
+        post = entities.BlogPost.get_by_id(int(post_id))
         params = {"post": post}
         # If the user is logged in check if they are not the owner of the
         # post and show a like/dislike button
@@ -40,7 +41,8 @@ class PostPage(ViewHandler):
     @ViewHandler.is_post_valid()
     @ViewHandler.is_user_authenticated()
     # Post request handler
-    def post(self, post_id, post):
+    def post(self, post_id):
+        post = entities.BlogPost.get_by_id(int(post_id))
         params = {"post": post, "user": self.user}
         has_error = False
 

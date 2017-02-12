@@ -71,9 +71,6 @@ class ViewHandler(webapp2.RequestHandler):
     # an optional argument to specify the response type
     @staticmethod
     def is_user_authenticated(response_type=None):
-        """ Decorator which redirects the user to login page or returns a json
-        response based on if the user is logged in and the decorator parameters
-        """
         def user_authenticated(f):
             @functools.wraps(f)
             def wrap(self, *args, **kwargs):
@@ -90,21 +87,17 @@ class ViewHandler(webapp2.RequestHandler):
             return wrap
         return user_authenticated
 
-        # Function decorator to check if the user is authenticated which takes
-        # an optional argument to specify the response type
-
+    # Decorator to check if a post_id is valid and exists in the database
+    # takes an optional argument to specify response type
     @staticmethod
     def is_post_valid(response_type=None):
-        """ Decorator which redirects the user to login page or returns a json
-        response based on if the user is logged in and the decorator parameters
-        """
         def post_valid(f):
             @functools.wraps(f)
             def wrap(self, post_id, *args, **kwargs):
                 if helpers.is_valid_int64(post_id):
                     post = entities.BlogPost.get_by_id(int(post_id))
                     if post:
-                        x = f(self, post_id, post, *args, **kwargs)
+                        x = f(self, post_id, *args, **kwargs)
                     else:
                         if response_type == 'json':
                             x = self.response.write(json.dumps({
@@ -117,3 +110,56 @@ class ViewHandler(webapp2.RequestHandler):
                 return x
             return wrap
         return post_valid
+
+    # Decorator to check if a comment_id is valid and exists in the database
+    # takes an optional argument to specify response type
+    @staticmethod
+    def is_comment_valid(response_type=None):
+        def comment_valid(f):
+            @functools.wraps(f)
+            def wrap(self, comment_id, *args, **kwargs):
+                if helpers.is_valid_int64(comment_id):
+                    comment = entities.Comments.get_by_id(int(comment_id))
+                    if comment:
+                        x = f(self, comment_id, *args, **kwargs)
+                    else:
+                        if response_type == 'json':
+                            x = self.response.write(json.dumps({
+                                "error": "Invalid comment id"
+                            }))
+                        else:
+                            x = self.redirect('/')
+                else:
+                    x = self.redirect('/')
+                return x
+            return wrap
+        return comment_valid
+
+    # Decorator to check if the current user is owner of the current comment
+    # takes an optional argument to specify response type
+    @staticmethod
+    def is_comment_owner(response_type=None):
+        def comment_owner(f):
+            @functools.wraps(f)
+            def wrap(self, comment_id, *args, **kwargs):
+                comment = entities.Comments.get_by_id(int(comment_id))
+                if self.user:
+                    if self.user.username == comment.username:
+                        x = f(self, comment_id, *args, **kwargs)
+                    else:
+                        if response_type == 'json':
+                            x = self.response.write(json.dumps({
+                                "error": "Invalid user"
+                            }))
+                        else:
+                            x = self.redirect('/')
+                else:
+                    if response_type == 'json':
+                        x = self.response.write(json.dumps({
+                            "error": "User not authorized"
+                        }))
+                    else:
+                        x = self.redirect('/login')
+                return x
+            return wrap
+        return comment_owner
