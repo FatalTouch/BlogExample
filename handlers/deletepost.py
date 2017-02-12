@@ -5,7 +5,7 @@ import entities
 import time
 
 
-# Handler for new comments
+# Handler for deleting posts
 class DeletePostHandler(ViewHandler):
 
     # This handler only accepts post requests and we make sure that post is
@@ -28,5 +28,3 @@ class DeletePostHandler(ViewHandler):
         except db.TransactionFailedError:
             params["error"] = "Cannot delete post due to an unknown reason"
             self.response.write(json.dumps(params))
-
-

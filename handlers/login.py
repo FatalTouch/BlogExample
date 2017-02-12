@@ -28,4 +28,3 @@ class LoginPage(ViewHandler):
             self.redirect('/welcome')
         else:
             self.render("login.html", error="Invalid login", username=username)
-

@@ -4,7 +4,7 @@ import json
 import entities
 
 
-# Handler for new comments
+# Handler for editing posts
 class EditPostHandler(ViewHandler):
 
     # This handler only accepts post requests and we make sure that comment is
@@ -57,10 +57,3 @@ class EditPostHandler(ViewHandler):
                                    "occurred. Please "
                                    "try again later")
                 self.response.out.write(json.dumps(params))
-
-
-
-
-
-
-

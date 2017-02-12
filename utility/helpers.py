@@ -1,7 +1,6 @@
 import hashlib
 import random
 import hmac
-import logging
 # Letters that are used to create a salt
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 # Secret key that is used to make a secure value
@@ -51,8 +50,3 @@ def is_valid_int64(i):
             return True
     except ValueError:
         return False
-
-
-def log(msg):
-    logging.info(msg)
-

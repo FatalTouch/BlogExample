@@ -4,7 +4,7 @@ import json
 import entities
 
 
-# Handler for new comments
+# Handler for editing comments
 class EditCommentHandler(ViewHandler):
 
     # This handler only accepts post requests and we make sure that comment is

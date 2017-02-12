@@ -6,7 +6,7 @@
         // Current url of the page without hash strings
     var currentUrl = location.href.replace(location.hash, '');
     // Get The new comment submit button if it exists
-    var buttonNewComment = document.getElementById('buttonNewComment')
+    var buttonNewComment = document.getElementById('buttonNewComment');
 
     // Get all the elements which allow the user to edit the comment.
     var editCommentElements = document.getElementsByClassName('edit-comment');
@@ -38,7 +38,7 @@
     /** PAGE VARIABLES END **/
 
         // Function to send an ajax request
-    var SendAjaxRequest = function (url, parameters, successFunction, errorFunction) {
+    var sendAjaxRequest = function (url, parameters, successFunction, errorFunction) {
 
             var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
             xmlhttp.onreadystatechange = function () {
@@ -61,25 +61,22 @@
             xmlhttp.send(parameters);
         };
 
-    // Function to append a new comment
-    var appendNewComment = function (comment_id, comment, username, created) {
-        var html = '<div class="row comment">' +
-            '<div id="comment' + comment_id + '" class="col-xs-12 comment">' +
-            '<h4 class="comment-user">' +
-            username + '<span>' +
-            '<time class="timeago"' +
-            'datetime="' + created + '+00:00"></time>' +
-            '</span>' +
-            '</h4>' +
-            '<p>' + comment + '</p>' +
-            '<span><button type="button" class="delete-comment" data-comment="' + comment_id + '">Delete</button></span>' +
-            '<span><button type="button" class="edit-comment" data-comment="' + comment_id + '">Edit</button></span>' +
-            '</div>' +
-            '</div>';
-        $('#comments').prepend(html);
-        $('time.timeago').timeago();
-        $('.edit-comment:first-of-type').click(editCommentHandler);
-        $('.delete-comment:first-of-type').click(deleteCommentHandler);
+
+
+    // function that will be attached to delete button click event
+    var deleteCommentHandler = function () {
+        var commentId = this.getAttribute('data-comment');
+        var url = '/comment/' + commentId + '/delete';
+        var elementToDelete = document.getElementById('comment' + commentId);
+        var onSuccess = function () {
+            $(elementToDelete).remove();
+        };
+
+        var onError = function (response) {
+            window.alert(response.error);
+        };
+
+        sendAjaxRequest(url, '', onSuccess, onError);
     };
 
     // function that will be attached on edit button click event
@@ -137,30 +134,13 @@
             };
 
             var url = '/comment/' + commentId + '/edit';
-            var parameters = "comment=" + editElement.value;
-            SendAjaxRequest(url, parameters, onSuccess, onError);
+            var parameters = 'comment=' + editElement.value;
+            sendAjaxRequest(url, parameters, onSuccess, onError);
         });
-    };
-
-    // function that will be attached to delete button click event
-    var deleteCommentHandler = function () {
-        var commentId = this.getAttribute('data-comment');
-        var url = '/comment/' + commentId + '/delete';
-        var elementToDelete = document.getElementById('comment' + commentId);
-        var onSuccess = function () {
-            $(elementToDelete).remove();
-        };
-
-        var onError = function (response) {
-            alert(response.error)
-        };
-
-        SendAjaxRequest(url, "", onSuccess, onError);
     };
 
     // function that will be attached to confirm delete post event
     var confirmDeleteHandler = function () {
-        console.log("clicked");
         var url = currentUrl + '/delete';
         var parameters = '';
 
@@ -169,12 +149,35 @@
         };
 
         var onError = function (response) {
-            alert(response.error);
+            window.alert(response.error);
         };
 
-        SendAjaxRequest(url, parameters, onSuccess, onError);
+        sendAjaxRequest(url, parameters, onSuccess, onError);
     };
 
+
+    // Function to append a new comment
+    var appendNewComment = function (commentId, comment, username, created) {
+        var html = '<div class="row comment">' +
+            '<div id="comment' + commentId + '" class="col-xs-12 comment">' +
+            '<h4 class="comment-user">' +
+            username + '<span>' +
+            '<time class="timeago"' +
+            'datetime="' + created + '+00:00"></time>' +
+            '</span>' +
+            '</h4>' +
+            '<p>' + comment + '</p>' +
+            '<span><button type="button" class="delete-comment" data-comment="' +
+            commentId + '">Delete</button></span>' +
+            '<span><button type="button" class="edit-comment" data-comment="' +
+            commentId + '">Edit</button></span>' +
+            '</div>' +
+            '</div>';
+        $('#comments').prepend(html);
+        $('time.timeago').timeago();
+        $('.edit-comment:first-of-type').click(editCommentHandler);
+        $('.delete-comment:first-of-type').click(deleteCommentHandler);
+    };
 
     // Check if edit button was found and attach the handler
     if (editButton) {
@@ -236,7 +239,7 @@
 
             var url = currentUrl + '/edit';
             var parameters = 'subject=' + subject + '&content=' + content;
-            SendAjaxRequest(url, parameters, onSuccess, onError);
+            sendAjaxRequest(url, parameters, onSuccess, onError);
 
             //return false so we don't submit the form as it is an ajax request!!
             return false;
@@ -257,33 +260,28 @@
             var onSuccess = function (data) {
                 commentElement.value = '';
                 appendNewComment(data.comment_id, data.comment, data.username, data.created);
-            }
+            };
 
             var onError = function (response) {
-                errorSpan.innerHTML = response.error
-            }
-            var parameters = "comment=" + comment;
-            SendAjaxRequest(currentUrl + '/comment', parameters, onSuccess, onError);
-        }
+                errorSpan.innerHTML = response.error;
+            };
+            var parameters = 'comment=' + comment;
+            sendAjaxRequest(currentUrl + '/comment', parameters, onSuccess, onError);
+        };
         buttonNewComment.addEventListener('click', buttonNewCommentClick);
     }
 
 
     // Attach to all edit comment elements on the page if any.
-    if (editCommentElements) {
+    if (editCommentElements && deleteCommentElements) {
         // Loop through all the editComment elements and attach to click event
         for (var i = 0; i < editCommentElements.length; i++) {
             editCommentElements[i].addEventListener('click', editCommentHandler);
-        }
-    }
-
-    // Attach to all delete comment elements on page if any
-    if (deleteCommentElements) {
-        // Loop through all the editComment elements and attach to click event
-        for (var i = 0; i < deleteCommentElements.length; i++) {
             deleteCommentElements[i].addEventListener('click', deleteCommentHandler);
         }
     }
+
+
 
     // Attach to click event if the button exists
     if (likeButton) {
@@ -328,7 +326,7 @@
             var url = currentUrl + '/like';
             var parameters = 'action=' + action;
 
-            SendAjaxRequest(url, parameters, onSuccess, onError);
+            sendAjaxRequest(url, parameters, onSuccess, onError);
         });
     }
 

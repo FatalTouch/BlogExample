@@ -44,7 +44,8 @@ class NewPostPage(ViewHandler):
             # post in the db, if the post is created redirect the user to the
             # post page otherwise show an error
             content = helpers.basic_escape(content)
-            post = entities.BlogPost.create(subject, content, self.user.username)
+            post = entities.BlogPost.create(subject, content,
+                                            self.user.username)
             if post:
                 self.redirect('/post/%s' % str(post.key().id()))
             else:
