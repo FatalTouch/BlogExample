@@ -120,12 +120,8 @@
             <!-- Show the edit controls if the user is owner of the comment -->
             {% if user %}
             {% if c.username == user.username %}
-            <form action="/comment" method="post">
-                <input type="hidden" value="{{c.key().id()}}" name="comment_id">
-                <span><button type="submit" value="delete" name="action">Delete</button></span>
-                <span><button type="button" class="edit-comment" data-comment="{{c.key().id()}}" value="edit"
-                              name="action">Edit</button></span>
-            </form>
+                <span><button type="button" class="delete-comment" data-comment="{{c.key().id()}}">Delete</button></span>
+                <span><button type="button" class="edit-comment" data-comment="{{c.key().id()}}">Edit</button></span>
             {% endif %}
             {% endif %}
         </div>

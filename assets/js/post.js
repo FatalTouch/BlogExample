@@ -171,6 +171,9 @@
     // Get all the elements which allow the user to edit the comment.
     var editCommentElements = document.getElementsByClassName('edit-comment');
 
+    // Get all the elements which allow the user to delete the comments
+    var deleteCommentElements = document.getElementsByClassName('delete-comment');
+
     // Function to send an ajax request
     var SendAjaxRequest = function (url, parameters, successFunction, errorFunction) {
 
@@ -206,17 +209,14 @@
             '</span>' +
             '</h4>' +
             '<p>' + comment + '</p>' +
-            '<form action="/comment" method="post">' +
-            '<input type="hidden" value="' + comment_id + '" name="comment_id">' +
-            '<span><button type="submit" value="delete" name="action">Delete</button></span>' +
-            '<span><button type="button" class="edit-comment" data-comment="' + comment_id + '" value="edit"' +
-            'name="action">Edit</button></span>' +
-            '</form>' +
+            '<span><button type="button" class="delete-comment" data-comment="' + comment_id + '">Delete</button></span>' +
+            '<span><button type="button" class="edit-comment" data-comment="' + comment_id + '">Edit</button></span>' +
             '</div>' +
             '</div>';
         $('#comments').prepend(html);
         $('time.timeago').timeago();
         $('.edit-comment:first-of-type').click(editCommentHandler);
+        $('.delete-comment:first-of-type').click(deleteCommentHandler);
     };
 
     // function that will be attached on edit button click event
@@ -273,9 +273,28 @@
                 errorSpan.innerHTML = response.error;
             };
 
+            var url = '/comment/' + commentId + '/edit';
             var parameters = "comment=" + editElement.value;
-            SendAjaxRequest('/comment/' + commentId + '/edit', parameters, onSuccess, onError);
+            SendAjaxRequest(url, parameters, onSuccess, onError);
         });
+    };
+
+    // function that will be attached to delete button click event
+    var deleteCommentHandler = function () {
+        console.log(count);
+        var commentId = this.getAttribute('data-comment');
+        var url = '/comment/' + commentId + '/delete';
+        var elementToDelete = document.getElementById('comment' + commentId);
+        var onSuccess = function () {
+            $(elementToDelete).remove();
+        };
+
+        var onError = function (response) {
+            console.log("xd");
+            alert(response.error)
+        }
+
+        SendAjaxRequest(url, "", onSuccess, onError);
     };
 
 
@@ -301,12 +320,19 @@
     }
 
 
-    // Attach to all edit elements on the page if any.
+    // Attach to all edit comment elements on the page if any.
     if (editCommentElements) {
         // Loop through all the editComment elements and attach to click event
         for (var i = 0; i < editCommentElements.length; i++) {
             editCommentElements[i].addEventListener('click', editCommentHandler);
+        }
+    }
 
+    // Attach to all delete comment elements on page if any
+    if (deleteCommentElements) {
+        // Loop through all the editComment elements and attach to click event
+        for (var i = 0; i < deleteCommentElements.length; i++) {
+            deleteCommentElements[i].addEventListener('click', deleteCommentHandler);
         }
     }
 

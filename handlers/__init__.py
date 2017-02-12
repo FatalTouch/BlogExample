@@ -1,6 +1,5 @@
 from viewhandler import ViewHandler
 from index import IndexPage
-from comment import CommentHandler
 from likes import LikesHandler
 from login import LoginPage
 from logout import LogoutPage
@@ -8,4 +7,4 @@ from newpost import NewPostPage
 from post import PostPage
 from signup import SignupPage
 from welcome import WelcomePage
-from comment1 import newcomment
+import comment
