@@ -163,3 +163,32 @@ class ViewHandler(webapp2.RequestHandler):
                 return x
             return wrap
         return comment_owner
+
+    # Decorator to check if the current user is owner of the current comment
+    # takes an optional argument to specify response type
+    @staticmethod
+    def is_post_owner(response_type=None):
+        def post_owner(f):
+            @functools.wraps(f)
+            def wrap(self, post_id, *args, **kwargs):
+                post = entities.BlogPost.get_by_id(int(post_id))
+                if self.user:
+                    if self.user.username == post.username:
+                        x = f(self, post_id, *args, **kwargs)
+                    else:
+                        if response_type == 'json':
+                            x = self.response.write(json.dumps({
+                                "error": "Invalid user"
+                            }))
+                        else:
+                            x = self.redirect('/')
+                else:
+                    if response_type == 'json':
+                        x = self.response.write(json.dumps({
+                            "error": "User not authorized"
+                        }))
+                    else:
+                        x = self.redirect('/login')
+                return x
+            return wrap
+        return post_owner

@@ -7,4 +7,5 @@ from newpost import NewPostPage
 from post import PostPage
 from signup import SignupPage
 from welcome import WelcomePage
+from editpost import EditPostHandler
 import comment
